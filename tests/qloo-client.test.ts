@@ -11,7 +11,7 @@ function client(responses: (Response | Error)[]) {
     if (next instanceof Error) throw next;
     return next!;
   });
-  return { fetcher, qloo: createQlooClient({ apiKey: "test-key", baseUrl: "https://qloo.test", fetcher }) };
+  return { fetcher, qloo: createQlooClient({ apiKey: "test-key", baseUrl: "https://qloo.test", fetcher, cache: null }) };
 }
 
 describe("qloo client", () => {

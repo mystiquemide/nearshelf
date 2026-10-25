@@ -1,8 +1,14 @@
 import "server-only";
+import { createTtlCache, type TtlCache } from "./cache";
 import { toBook, type Book } from "./types";
 
 const BASE_URL = "https://hackathon.api.qloo.com";
 const TIMEOUT_MS = 10_000;
+const CACHE_TTL_S = 24 * 60 * 60;
+
+// Private server-side caching is allowed by Qloo's hackathon terms. Response data never
+// leaves the server. This instance cache is shared by every client in the process.
+const sharedCache = createTtlCache<unknown>({ max: 500, ttlMs: CACHE_TTL_S * 1000 });
 
 export type QlooErrorKind = "config" | "unauthorized" | "forbidden" | "rate_limited" | "bad_request" | "upstream" | "timeout" | "network";
 
@@ -29,6 +35,7 @@ export interface QlooClientOptions {
   baseUrl?: string;
   fetcher?: Fetcher;
   timeoutMs?: number;
+  cache?: TtlCache<unknown> | null;
 }
 
 export interface InsightsParams {
@@ -57,6 +64,7 @@ export function createQlooClient(options: QlooClientOptions = {}) {
   const baseUrl = options.baseUrl ?? BASE_URL;
   const fetcher = options.fetcher ?? fetch;
   const timeoutMs = options.timeoutMs ?? TIMEOUT_MS;
+  const cache = options.cache === undefined ? sharedCache : options.cache;
 
   async function attempt(url: string): Promise<unknown> {
     let res: Response;
@@ -65,7 +73,9 @@ export function createQlooClient(options: QlooClientOptions = {}) {
         method: "GET",
         headers: { "X-Api-Key": apiKey!, Accept: "application/json" },
         signal: AbortSignal.timeout(timeoutMs),
-      });
+        // Next's data cache shares successful GETs across serverless instances.
+        next: { revalidate: CACHE_TTL_S },
+      } as RequestInit);
     } catch (err) {
       const timedOut = err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError");
       throw new QlooError(timedOut ? "timeout" : "network", timedOut ? "Qloo took too long to respond" : "Couldn't reach Qloo", undefined, { cause: err });
@@ -82,12 +92,17 @@ export function createQlooClient(options: QlooClientOptions = {}) {
   async function get(path: string, params: Record<string, string>): Promise<unknown> {
     if (!apiKey) throw new QlooError("config", "QLOO_API_KEY is not set");
     const url = `${baseUrl}${path}?${new URLSearchParams(params)}`;
-    try {
-      return await attempt(url);
-    } catch (err) {
-      if (err instanceof QlooError && err.kind === "upstream" && err.status !== undefined) return attempt(url);
-      throw err;
-    }
+    const load = async () => {
+      try {
+        return await attempt(url);
+      } catch (err) {
+        if (err instanceof QlooError && err.kind === "upstream" && err.status !== undefined) return attempt(url);
+        throw err;
+      }
+    };
+    if (!cache) return load();
+    const key = `${path}?${new URLSearchParams(Object.entries(params).sort(([a], [b]) => a.localeCompare(b)))}`;
+    return cache.get(key, load);
   }
 
   return {
