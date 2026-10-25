@@ -12,7 +12,7 @@ function spineHue(id: string) {
   return ((h ^ (h >>> 13)) >>> 0) % 360;
 }
 
-export function Shelf({ result, seedTitles }: { result: RunResult; seedTitles: string[] }) {
+export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seedTitles: string[]; onWiden?: () => void }) {
   const [openId, setOpenId] = useState<string | null>(result.accepted[0]?.book.id ?? null);
   const open = result.accepted.find((v) => v.book.id === openId) ?? null;
 
@@ -25,7 +25,10 @@ export function Shelf({ result, seedTitles }: { result: RunResult; seedTitles: s
       </p>
 
       {result.accepted.length === 0 ? (
-        <p className="empty">No comps passed the rules for these seeds. Try a wider window or different seed books.</p>
+        <div className="empty">
+          <p>No comps passed the rules for these seeds. Try a wider window or different seed books.</p>
+          {onWiden && <button type="button" className="btn" onClick={onWiden}>Widen to 5 years</button>}
+        </div>
       ) : (
         <>
           <ul className="shelf" role="list">
@@ -45,6 +48,12 @@ export function Shelf({ result, seedTitles }: { result: RunResult; seedTitles: s
             ))}
           </ul>
           <div className="shelf-board" aria-hidden="true" />
+          {result.accepted.length === 1 && (
+            <div className="row">
+              <p className="small muted">Only one book passed the rules.{onWiden ? " A wider window may find more." : ""}</p>
+              {onWiden && <button type="button" className="btn" onClick={onWiden}>Widen to 5 years</button>}
+            </div>
+          )}
         </>
       )}
 

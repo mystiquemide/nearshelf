@@ -140,3 +140,13 @@ textarea { resize: vertical; }
 .agent-log p { margin: 4px 0 0; }
 .tool code { word-break: normal; }
 .tool-error code { color: var(--bad); }
+
+.start { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); margin-bottom: 16px; }
+.start > .panel { margin-bottom: 0; }
+@media (min-width: 900px) { .start { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; } }
+.rules ol { margin: 8px 0 12px; padding-left: 20px; }
+.rules li { margin-bottom: 6px; }
+.empty .btn { margin-top: 8px; }
+.empty p { margin: 0; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+.error-panel h1 { font-size: 1.5rem; }

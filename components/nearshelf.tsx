@@ -6,6 +6,7 @@ import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
 import { AgentLog } from "./agent-log";
 import { Baseline } from "./baseline";
+import { RulesPanel } from "./rules-panel";
 import { CheckComps } from "./check-comps";
 import { Shelf } from "./shelf";
 import type { AgentEvent, BaselineResponse, RunError, RunEvent, RunResult, SeedResolution, StepState, ToolEvent } from "./types";
@@ -32,7 +33,7 @@ const SEED_NOTE: Record<SeedResolution["status"], (s: SeedResolution) => string>
 
 type Phase = "idle" | "running" | "done" | "error";
 
-export function Nearshelf() {
+export function Nearshelf({ popularityMax }: { popularityMax: number | null }) {
   const [seeds, setSeeds] = useState<[string, string, string]>(["", "", ""]);
   const [windowYears, setWindowYears] = useState(WINDOW_DEFAULT);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -45,13 +46,15 @@ export function Nearshelf() {
   const [baseline, setBaseline] = useState<BaselineResponse | null>(null);
   const [baselineLoading, setBaselineLoading] = useState(false);
   const [myTitle, setMyTitle] = useState("");
-  const [copied, setCopied] = useState<"sentence" | "link" | null>(null);
+  const [copied, setCopied] = useState<"sentence" | "link" | "failed" | null>(null);
   const runId = useRef(0);
+  const lastInput = useRef<{ seeds: string[]; windowYears: number } | null>(null);
 
   const filled = seeds.map((s) => s.trim()).filter(Boolean);
 
   async function run(input: { seeds: string[]; windowYears: number }) {
     const id = ++runId.current;
+    lastInput.current = input;
     setPhase("running");
     setStep(null);
     setSeedResults({});
@@ -126,7 +129,8 @@ export function Nearshelf() {
       setCopied(kind);
       setTimeout(() => setCopied(null), 2000);
     } catch {
-      setCopied(null);
+      // Clipboard can be blocked by the browser. The text stays on screen to select by hand.
+      setCopied("failed");
     }
   }
 
@@ -135,6 +139,13 @@ export function Nearshelf() {
   const sentence = result ? compSentence(result.accepted.map((v) => v.book), myTitle) : null;
   const topComp = result?.accepted[0]?.book;
   const replacement = topComp ? `${topComp.title}${topComp.author ? ` by ${topComp.author}` : ""}` : null;
+  const retry = () => lastInput.current && void run(lastInput.current);
+  const widen = () => {
+    if (!lastInput.current) return;
+    setWindowYears(WINDOW_MAX);
+    void run({ ...lastInput.current, windowYears: WINDOW_MAX });
+  };
+  const canWiden = (lastInput.current?.windowYears ?? WINDOW_MAX) < WINDOW_MAX;
 
   return (
     <main className="wrap">
@@ -143,6 +154,7 @@ export function Nearshelf() {
         <p className="lede">Recent, mid-list comp titles for your query letter, backed by real reader data. If Qloo can't find the readers, it isn't a comp.</p>
       </header>
 
+      <div className={phase === "idle" ? "start" : undefined}>
       <section className="panel" aria-labelledby="seeds-h">
         <h2 id="seeds-h">Your book reads like</h2>
         <form
@@ -194,6 +206,8 @@ export function Nearshelf() {
           ))}
         </div>
       </section>
+      {phase === "idle" && <RulesPanel windowYears={windowYears} popularityMax={popularityMax} />}
+      </div>
 
       {phase !== "idle" && (
         <ol className="steps" aria-live="polite" aria-label="Progress">
@@ -217,7 +231,7 @@ export function Nearshelf() {
         <div className="panel error-panel" role="alert">
           <p>{error.message}</p>
           {error.retryable && (
-            <button type="button" className="btn" onClick={() => void run({ seeds: filled, windowYears })}>
+            <button type="button" className="btn" onClick={retry}>
               Try again
             </button>
           )}
@@ -226,7 +240,14 @@ export function Nearshelf() {
 
       <div className="grid">
         <div>
-          {result && <Shelf key={result.accepted.map((v) => v.book.id).join()} result={result} seedTitles={resolvedSeedTitles} />}
+          {result && (
+            <Shelf
+              key={result.accepted.map((v) => v.book.id).join()}
+              result={result}
+              seedTitles={resolvedSeedTitles}
+              onWiden={canWiden ? widen : undefined}
+            />
+          )}
 
           {sentence && (
             <section className="panel" aria-labelledby="sentence-h">
@@ -234,6 +255,9 @@ export function Nearshelf() {
               <label htmlFor="my-title" className="small">Your book's title (optional)</label>
               <input id="my-title" value={myTitle} maxLength={120} onChange={(e) => setMyTitle(e.target.value)} placeholder="My novel" />
               <blockquote className="sentence">{sentence}</blockquote>
+              {result?.accepted.length === 1 && (
+                <p className="small muted">One comp is weaker than two in a query. Widen the window or add a seed book.</p>
+              )}
               <div className="row">
                 <button type="button" className="btn" onClick={() => copy("sentence", sentence)}>
                   {copied === "sentence" ? "Copied" : "Copy line"}
@@ -242,6 +266,7 @@ export function Nearshelf() {
                   {copied === "link" ? "Link copied" : "Copy share link"}
                 </button>
               </div>
+              {copied === "failed" && <p className="small warn" role="status">Your browser blocked copying. Select the text above and copy it by hand.</p>}
             </section>
           )}
 

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   if (!input) return Response.json({ error: "Send one to three titles, each under 200 characters." }, { status: 400 });
 
   if (!sharedLimiter.take(clientIp(req))) {
-    const event: RunEvent = { type: "error", state: "RATE_LIMITED", reason: "rate_limited", message: "Too many requests. Try again in a minute.", retryable: true };
+    const event: RunEvent = { type: "error", state: "RATE_LIMITED", reason: "rate_limited", message: "Too many searches from your connection in the last 10 minutes. Try again in a minute.", retryable: true };
     return new Response(JSON.stringify(event) + "\n", { status: 429, headers: { "content-type": "application/x-ndjson" } });
   }
 
