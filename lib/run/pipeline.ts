@@ -77,7 +77,7 @@ export async function* runComps(input: RunInput, deps: RunDeps): AsyncGenerator<
   }
 }
 
-function errorEvent(err: unknown): RunEvent {
+export function errorEvent(err: unknown): Extract<RunEvent, { type: "error" }> {
   if (err instanceof QlooError) {
     if (err.kind === "rate_limited") return { type: "error", state: "RATE_LIMITED", reason: "rate_limited", message: "Too many requests to Qloo. Try again in a minute.", retryable: true };
     if (err.kind === "config") return { type: "error", state: "FAILED", reason: "qloo_not_configured", message: "Qloo isn't connected on this deployment yet.", retryable: false };

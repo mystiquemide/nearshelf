@@ -17,3 +17,10 @@ export function createRateLimiter(limit: number, windowMs: number, now: () => nu
     },
   };
 }
+
+// One budget shared by every route that spends Qloo or LLM quota: 20 runs per 10 minutes per IP (NFR-003).
+export const sharedLimiter = createRateLimiter(20, 10 * 60 * 1000);
+
+export function clientIp(req: Request): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown";
+}
