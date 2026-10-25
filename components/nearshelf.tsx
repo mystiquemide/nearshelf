@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { readNdjson } from "@/lib/client/ndjson";
 import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
+import { AgentLog } from "./agent-log";
 import { Baseline } from "./baseline";
 import { CheckComps } from "./check-comps";
 import { Shelf } from "./shelf";
-import type { BaselineResponse, RunError, RunEvent, RunResult, SeedResolution, StepState } from "./types";
+import type { AgentEvent, BaselineResponse, RunError, RunEvent, RunResult, SeedResolution, StepState, ToolEvent } from "./types";
 
 // Inputs only. Every result shown for a preset comes from a live run.
 const PRESETS: { label: string; seeds: [string, string, string] }[] = [
@@ -39,6 +40,8 @@ export function Nearshelf() {
   const [seedResults, setSeedResults] = useState<Record<string, SeedResolution>>({});
   const [result, setResult] = useState<RunResult | null>(null);
   const [error, setError] = useState<RunError | null>(null);
+  const [agent, setAgent] = useState<AgentEvent[]>([]);
+  const [tools, setTools] = useState<ToolEvent[]>([]);
   const [baseline, setBaseline] = useState<BaselineResponse | null>(null);
   const [baselineLoading, setBaselineLoading] = useState(false);
   const [myTitle, setMyTitle] = useState("");
@@ -52,6 +55,8 @@ export function Nearshelf() {
     setPhase("running");
     setStep(null);
     setSeedResults({});
+    setAgent([]);
+    setTools([]);
     setResult(null);
     setError(null);
     setBaseline(null);
@@ -78,13 +83,15 @@ export function Nearshelf() {
       let finished = false;
       await readNdjson<RunEvent>(res.body, (e) => {
         if (id !== runId.current) return;
-        if (e.type === "step") setStep(e.state);
+        if (e.type === "agent") setAgent((prev) => [...prev, e]);
+        else if (e.type === "tool") setTools((prev) => (e.status === "start" ? [...prev, e] : prev.map((t) => (t.name === e.name && t.status === "start" ? e : t))));
+        else if (e.type === "step") setStep(e.state);
         else if (e.type === "seed") setSeedResults((prev) => ({ ...prev, [e.seed.input]: e.seed }));
         else if (e.type === "result") {
           finished = true;
           setResult(e);
           setPhase("done");
-        } else {
+        } else if (e.type === "error") {
           finished = true;
           setError(e);
           setPhase("error");
@@ -203,6 +210,8 @@ export function Nearshelf() {
           })}
         </ol>
       )}
+
+      {agent.length > 0 && <AgentLog agent={agent} tools={tools} />}
 
       {error && (
         <div className="panel error-panel" role="alert">

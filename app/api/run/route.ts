@@ -1,6 +1,7 @@
 import { createQlooClient } from "@/lib/qloo/client";
 import { createOpenLibraryClient } from "@/lib/openlibrary/client";
-import { parseRunInput, runComps, type RunEvent } from "@/lib/run/pipeline";
+import { parseRunInput, type RunEvent } from "@/lib/run/pipeline";
+import { nvidiaModel, runAgent } from "@/lib/agent/agent";
 import { clientIp, sharedLimiter } from "@/lib/run/rate-limit";
 import { popularityCeiling } from "@/lib/run/config";
 
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      for await (const event of runComps(input, deps)) controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
+      for await (const event of runAgent(input, deps, nvidiaModel())) controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
       controller.close();
     },
   });

@@ -5,6 +5,8 @@ import type { SeedResolution } from "@/lib/run/resolve";
 export type { RunEvent, CheckResult, SeedResolution };
 export type RunResult = Extract<RunEvent, { type: "result" }>;
 export type RunError = Extract<RunEvent, { type: "error" }>;
+export type AgentEvent = Extract<RunEvent, { type: "agent" }>;
+export type ToolEvent = Extract<RunEvent, { type: "tool" }>;
 export type StepState = "RESOLVING" | "QUERYING" | "CHECKING";
 
 export type BaselineResponse =
