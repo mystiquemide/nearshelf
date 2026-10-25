@@ -1,6 +1,6 @@
 import type { Book } from "@/lib/qloo/types";
 import { clampWindow, WINDOW_DEFAULT } from "@/lib/rules/engine";
-import { parseRunInput, type RunInput } from "@/lib/run/pipeline";
+import { parseRunInput, type RunInput } from "@/lib/run/input";
 
 // Built only from accepted comps. Returns null instead of a sentence with nothing in it.
 export function compSentence(comps: Pick<Book, "title" | "author">[], myTitle?: string): string | null {
