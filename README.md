@@ -14,7 +14,7 @@ Nearshelf gives the author comps that are actually read by the same readers as t
 
 ## What it does
 
-1. **Enter up to three books yours reads like**, or pick a preset. Choose how recent comps must be (2 to 5 years).
+1. **Enter up to three books your novel reads like**, or pick a preset. Choose how recent comps must be (2 to 5 years).
 2. **The agent looks them up in Qloo.** Each field shows whether the book was found, isn't a real book, or is real but has no Qloo reader data.
 3. **Qloo returns books those readers also love.** Every candidate is re-checked in code:
    - published inside the recency window
