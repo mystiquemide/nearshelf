@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { readNdjson } from "@/lib/client/ndjson";
 import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
 import { AgentLog } from "./agent-log";
+import { AlsoLove } from "./also-love";
 import { Baseline } from "./baseline";
 import { RulesPanel } from "./rules-panel";
 import { CheckComps } from "./check-comps";
@@ -33,7 +34,7 @@ const SEED_NOTE: Record<SeedResolution["status"], (s: SeedResolution) => string>
 
 type Phase = "idle" | "running" | "done" | "error";
 
-export function Nearshelf({ popularityMax }: { popularityMax: number | null }) {
+export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { popularityMax: number | null; alsoLoveEnabled?: boolean }) {
   const [seeds, setSeeds] = useState<[string, string, string]>(["", "", ""]);
   const [windowYears, setWindowYears] = useState(WINDOW_DEFAULT);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -145,6 +146,7 @@ export function Nearshelf({ popularityMax }: { popularityMax: number | null }) {
     setWindowYears(WINDOW_MAX);
     void run({ ...lastInput.current, windowYears: WINDOW_MAX });
   };
+  const alsoLoveIds = useMemo(() => (result ? result.accepted.slice(0, 3).map((v) => v.book.id) : []), [result]);
   const canWiden = (lastInput.current?.windowYears ?? WINDOW_MAX) < WINDOW_MAX;
 
   return (
@@ -269,6 +271,8 @@ export function Nearshelf({ popularityMax }: { popularityMax: number | null }) {
               {copied === "failed" && <p className="small warn" role="status">Your browser blocked copying. Select the text above and copy it by hand.</p>}
             </section>
           )}
+
+          {alsoLoveEnabled && alsoLoveIds.length > 0 && <AlsoLove compIds={alsoLoveIds} />}
 
           <CheckComps windowYears={windowYears} replacement={replacement} />
         </div>

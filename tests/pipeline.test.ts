@@ -14,6 +14,7 @@ function deps(over: { insights?: QlooClient["bookInsights"]; ol?: OpenLibraryCli
   const qloo = {
     searchBooks: vi.fn(async (q: string) => (library[q.toLowerCase()] ? [library[q.toLowerCase()]!] : [])),
     bookInsights: vi.fn(over.insights ?? (async () => ({ books: [book("S1", "Seed One"), book("C1", "Comp One"), book("C2", "Old Comp", { year: 2001 })], explainability: { seeds: ["S1"] } }))),
+    crossDomainInsights: vi.fn(async () => []),
   } satisfies QlooClient;
   const openLibrary = { findBook: vi.fn(over.ol ?? (async () => null)) } satisfies OpenLibraryClient;
   const d: RunDeps = { qloo, openLibrary, popularityMax: over.popularityMax ?? 0.8, now: () => new Date("2026-10-25") };

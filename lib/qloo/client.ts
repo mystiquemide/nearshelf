@@ -127,7 +127,25 @@ export function createQlooClient(options: QlooClientOptions = {}) {
         explainability: (body as { query?: { explainability?: unknown } })?.query?.explainability ?? null,
       };
     },
+
+    // Taste beyond books: what readers of the given books also like in another domain.
+    async crossDomainInsights(type: CrossDomainType, seedIds: string[], take = 5): Promise<NamedEntity[]> {
+      if (seedIds.length === 0) throw new QlooError("bad_request", "At least one seed is required");
+      const body = await get("/v2/insights", { "filter.type": type, "signal.interests.entities": seedIds.join(","), take: String(take) });
+      return entitiesOf(body).flatMap((e) => {
+        const r = e as { entity_id?: unknown; id?: unknown; name?: unknown };
+        const id = typeof r.entity_id === "string" ? r.entity_id : typeof r.id === "string" ? r.id : null;
+        return id && typeof r.name === "string" && r.name.trim() ? [{ id, name: r.name.trim() }] : [];
+      });
+    },
   };
+}
+
+export type CrossDomainType = "urn:entity:podcast" | "urn:entity:tv_show" | "urn:entity:artist";
+
+export interface NamedEntity {
+  id: string;
+  name: string;
 }
 
 export type QlooClient = ReturnType<typeof createQlooClient>;

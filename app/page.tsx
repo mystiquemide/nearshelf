@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nearshelf } from "@/components/nearshelf";
 import { popularityCeiling } from "@/lib/run/config";
+import { alsoLoveEnabled } from "@/lib/run/also-love";
 import { parseShareQuery, shareQuery } from "@/lib/share";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -25,5 +26,5 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default function Home() {
-  return <Nearshelf popularityMax={popularityCeiling()} />;
+  return <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} />;
 }

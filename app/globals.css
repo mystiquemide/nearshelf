@@ -150,3 +150,8 @@ textarea { resize: vertical; }
 .empty p { margin: 0; }
 a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .error-panel h1 { font-size: 1.5rem; }
+
+.also { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 12px; }
+.also h3 { font-size: 0.95rem; margin: 0 0 6px; }
+.also ul { margin: 0; padding-left: 18px; }
+.also li { margin-bottom: 4px; }

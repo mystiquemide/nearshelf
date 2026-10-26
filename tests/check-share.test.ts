@@ -16,7 +16,7 @@ const catalog: Book[] = [
   { id: "DUP1", title: "Shared Title", author: "Hannah Kaner", year: 2024, popularity: 0.3 },
 ];
 const deps = {
-  qloo: { searchBooks: vi.fn(async (q: string) => catalog.filter((b) => b.title.toLowerCase().startsWith(q.toLowerCase()))), bookInsights: vi.fn() } satisfies QlooClient,
+  qloo: { searchBooks: vi.fn(async (q: string) => catalog.filter((b) => b.title.toLowerCase().startsWith(q.toLowerCase()))), bookInsights: vi.fn(), crossDomainInsights: vi.fn() } satisfies QlooClient,
   openLibrary: { findBook: vi.fn(async (t: string) => (t === "Real Small Press Book" ? { title: t, author: "Indie", firstPublishYear: 2024 } : null)) } satisfies OpenLibraryClient,
 };
 const cfg: RuleConfig = { currentYear: 2026, windowYears: 3, popularityMax: 0.8 };
