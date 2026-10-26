@@ -30,7 +30,7 @@ export function AlsoLove({ compIds }: { compIds: string[] }) {
   }, [compIds]);
 
   return (
-    <section className="panel" aria-labelledby="also-h" aria-busy={state === "loading"}>
+    <section className="tool-section" aria-labelledby="also-h" aria-busy={state === "loading"}>
       <h2 id="also-h">Readers of these comps also love</h2>
       <p className="muted small">From Qloo, based on your top comps. Useful for ad targeting and newsletter swaps.</p>
       {state === "loading" && <p className="muted">Asking Qloo</p>}

@@ -2,7 +2,7 @@
 // The size rule is only described when it's actually switched on.
 export function RulesPanel({ windowYears, popularityMax }: { windowYears: number; popularityMax: number | null }) {
   return (
-    <aside className="panel rules" aria-labelledby="rules-h">
+    <aside className="rules" aria-labelledby="rules-h">
       <h2 id="rules-h">How a comp gets on the shelf</h2>
       <ol>
         <li>Qloo finds books that readers of your seed books also love.</li>

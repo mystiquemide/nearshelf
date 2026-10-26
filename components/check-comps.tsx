@@ -28,18 +28,18 @@ export function CheckComps({ windowYears, replacement }: { windowYears: number; 
   }
 
   return (
-    <section className="panel" aria-labelledby="check-h">
+    <section className="tool-section" aria-labelledby="check-h">
       <h2 id="check-h">Check my comps</h2>
       <p className="muted small">Paste the comps you already have, one per line, up to five. Same rules as the shelf.</p>
       <label className="sr-only" htmlFor="check-input">Your comp titles</label>
       <textarea id="check-input" rows={4} value={text} onChange={(e) => setText(e.target.value)} placeholder={"Fourth Wing\nThe Bee Sting"} />
       <div className="row">
-        <button type="button" className="btn" disabled={titles.length === 0 || titles.length > 5 || state === "loading"} onClick={check}>
+        <button type="button" className="btn btn-primary" disabled={titles.length === 0 || titles.length > 5 || state === "loading"} onClick={check}>
           {state === "loading" ? "Checking" : "Check them"}
         </button>
         {titles.length > 5 && <span className="small warn">Five titles at most.</span>}
       </div>
-      {state === "error" && <p className="error" role="alert">{error}</p>}
+      {state === "error" && <p className="alert alert-fail" role="alert">{error}</p>}
       {state === "done" && (
         <ul className="verdicts" role="list" aria-live="polite">
           {results.map((r, i) => <VerdictRow key={i} r={r} replacement={replacement} />)}

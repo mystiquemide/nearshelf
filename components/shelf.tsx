@@ -17,7 +17,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
   const open = result.accepted.find((v) => v.book.id === openId) ?? null;
 
   return (
-    <section className="panel" aria-labelledby="shelf-h">
+    <section className="tool-section" aria-labelledby="shelf-h">
       <h2 id="shelf-h">Your comps</h2>
       <p className="muted small">
         Published {result.yearMin} or later
@@ -27,7 +27,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
       {result.accepted.length === 0 ? (
         <div className="empty">
           <p>No comps passed the rules for these seeds. Try a wider window or different seed books.</p>
-          {onWiden && <button type="button" className="btn" onClick={onWiden}>Widen to 5 years</button>}
+          {onWiden && <button type="button" className="btn btn-secondary" onClick={onWiden}>Widen to 5 years</button>}
         </div>
       ) : (
         <>
@@ -51,7 +51,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
           {result.accepted.length === 1 && (
             <div className="row">
               <p className="small muted">Only one book passed the rules.{onWiden ? " A wider window may find more." : ""}</p>
-              {onWiden && <button type="button" className="btn" onClick={onWiden}>Widen to 5 years</button>}
+              {onWiden && <button type="button" className="btn btn-secondary" onClick={onWiden}>Widen to 5 years</button>}
             </div>
           )}
         </>

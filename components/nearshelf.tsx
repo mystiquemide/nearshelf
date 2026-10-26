@@ -50,6 +50,9 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
   const [copied, setCopied] = useState<"sentence" | "link" | "failed" | null>(null);
   const runId = useRef(0);
   const lastInput = useRef<{ seeds: string[]; windowYears: number } | null>(null);
+  const [tab, setTab] = useState<Tab>("find");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [sharedSeeds, setSharedSeeds] = useState<string[] | null>(null);
 
   const filled = seeds.map((s) => s.trim()).filter(Boolean);
 
@@ -113,11 +116,19 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
   useEffect(() => {
     const input = parseShareQuery(window.location.search.slice(1));
     if (!input) return;
+    setSharedSeeds(input.seeds);
     setSeeds([input.seeds[0] ?? "", input.seeds[1] ?? "", input.seeds[2] ?? ""]);
     setWindowYears(input.windowYears);
     void run(input);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   function applyPreset(p: (typeof PRESETS)[number]) {
     setSeeds(p.seeds);
@@ -149,99 +160,200 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
   const alsoLoveIds = useMemo(() => (result ? result.accepted.slice(0, 3).map((v) => v.book.id) : []), [result]);
   const canWiden = (lastInput.current?.windowYears ?? WINDOW_MAX) < WINDOW_MAX;
 
+  const startSearch = () => {
+    setTab("find");
+    setMenuOpen(false);
+    document.getElementById("tool")?.scrollIntoView({ block: "start" });
+    window.setTimeout(() => document.getElementById("seed-0")?.focus({ preventScroll: true }), 50);
+  };
+
   return (
-    <main className="wrap">
-      <header className="hero">
-        <h1>Nearshelf</h1>
-        <p className="lede">Recent, mid-list comp titles for your query letter, backed by real reader data. If Qloo can't find the readers, it isn't a comp.</p>
+    <>
+      <header className="nav on-ink">
+        <div className="container nav-inner">
+          <a className="brand" href="/">
+            <SpineMark />
+            Nearshelf
+          </a>
+          <nav className="nav-links" aria-label="Main">
+            <a href="#how">How it works</a>
+            <a href="#tool" onClick={() => setTab("check")}>Check comps</a>
+            <a href="#llm">Why not an LLM</a>
+          </nav>
+          <button type="button" className="btn btn-primary nav-cta" onClick={startSearch}>Find my comps</button>
+          <button
+            type="button"
+            className="menu-btn"
+            aria-expanded={menuOpen}
+            aria-controls="menu-sheet"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <MenuIcon open={menuOpen} />
+          </button>
+        </div>
+        {menuOpen && (
+          <nav id="menu-sheet" className="container menu-sheet" aria-label="Main">
+            <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
+            <a href="#tool" onClick={() => { setTab("check"); setMenuOpen(false); }}>Check comps</a>
+            <a href="#llm" onClick={() => setMenuOpen(false)}>Why not an LLM</a>
+          </nav>
+        )}
       </header>
 
-      <div className={phase === "idle" ? "start" : undefined}>
-      <section className="panel" aria-labelledby="seeds-h">
-        <h2 id="seeds-h">Your book reads like</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (filled.length) void run({ seeds: filled, windowYears });
-          }}
-        >
-          {seeds.map((value, i) => {
-            const r = seedResults[value.trim().replace(/\s+/g, " ")];
-            return (
-              <div className="field" key={i}>
-                <label htmlFor={`seed-${i}`}>Book {i + 1}</label>
-                <input
-                  id={`seed-${i}`}
-                  value={value}
-                  maxLength={200}
-                  autoComplete="off"
-                  placeholder={i === 0 ? "A title you'd shelve yours next to" : "Optional"}
-                  onChange={(e) => setSeeds((prev) => prev.map((s, j) => (j === i ? e.target.value : s)) as [string, string, string])}
-                  aria-describedby={r ? `seed-${i}-note` : undefined}
-                />
-                {r && (
-                  <p id={`seed-${i}-note`} className={`seed-note seed-${r.status.toLowerCase()}`}>
-                    {SEED_NOTE[r.status](r)}
-                  </p>
-                )}
+      <main>
+        <section className="hero on-ink" aria-labelledby="hero-h">
+          <div className="container">
+            <div className="hero-copy">
+              <h1 id="hero-h">
+                {sharedSeeds ? `Comps for books like ${sharedSeeds.join(", ")}` : "Comp titles your query letter can stand on"}
+              </h1>
+              <p className="hero-sub">
+                Recent, mid-list books that readers of your book actually read. Picked from Qloo reader data, checked against the
+                rules agents use, and shown with the evidence.
+              </p>
+              <div className="row hero-actions">
+                <button type="button" className="btn btn-primary" onClick={startSearch}>Find my comps</button>
+                <a className="btn btn-secondary" href="#how">See how it works</a>
               </div>
-            );
-          })}
-          <div className="row">
-            <label htmlFor="window" className="small">Published in the last</label>
-            <select id="window" value={windowYears} onChange={(e) => setWindowYears(Number(e.target.value))}>
-              {Array.from({ length: WINDOW_MAX - WINDOW_MIN + 1 }, (_, i) => WINDOW_MIN + i).map((n) => (
-                <option key={n} value={n}>{n} years</option>
+              <p className="hero-source">Reader data from Qloo&apos;s taste graph</p>
+            </div>
+
+            <div className="tabs" role="tablist" aria-label="Tool">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  id={`tab-${t.id}`}
+                  className="tab"
+                  aria-selected={tab === t.id}
+                  aria-controls="tool-panel"
+                  onClick={() => setTab(t.id)}
+                >
+                  {t.label}
+                </button>
               ))}
-            </select>
-            <button type="submit" className="btn btn-primary" disabled={filled.length === 0 || phase === "running"}>
-              {phase === "running" ? "Finding comps" : "Find comps"}
-            </button>
+            </div>
+
+            <div className="frame" id="tool">
+              <div className="frame-bar">
+                <span>Nearshelf</span>
+                <span>{FRAME_NOTE[tab]}</span>
+              </div>
+              <div className="frame-body" id="tool-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
+                {tab === "find" && findPanel()}
+                {tab === "check" && <CheckComps windowYears={windowYears} replacement={replacement} />}
+                {tab === "llm" &&
+                  (phase === "idle" ? (
+                    <div className="tool-section">
+                      <h2>What a plain LLM said</h2>
+                      <p className="muted">Run a search first, then compare. The same seed books go to an LLM with no Qloo access.</p>
+                      <div className="row" style={{ marginTop: 16 }}>
+                        <button type="button" className="btn btn-primary" onClick={startSearch}>Find comps first</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Baseline data={baseline} loading={baselineLoading} />
+                  ))}
+              </div>
+            </div>
           </div>
-        </form>
-        <div className="presets">
-          <span className="small muted">Or try:</span>
-          {PRESETS.map((p) => (
-            <button key={p.label} type="button" className="btn btn-ghost" disabled={phase === "running"} onClick={() => applyPreset(p)}>
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </section>
-      {phase === "idle" && <RulesPanel windowYears={windowYears} popularityMax={popularityMax} />}
-      </div>
+        </section>
+      </main>
+    </>
+  );
 
-      {phase !== "idle" && (
-        <ol className="steps" aria-live="polite" aria-label="Progress">
-          {STEPS.map((s, i) => {
-            const failedHere = phase === "error" && i === Math.max(stepIndex, 0);
-            const status = failedHere ? "failed" : phase === "done" || i < stepIndex ? "done" : i === stepIndex ? "active" : "pending";
-            return (
-              <li key={s.state} className={`step step-${status}`}>
-                <span className="dot" aria-hidden="true" />
-                {s.label}
-                <span className="sr-only"> ({status})</span>
-              </li>
-            );
-          })}
-        </ol>
-      )}
+  function findPanel() {
+    return (
+      <div className="tool-grid">
+        <div>
+          <section className="tool-section" aria-labelledby="seeds-h">
+            <h2 id="seeds-h">Your book reads like</h2>
+            <form
+              style={{ marginTop: 12 }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (filled.length) void run({ seeds: filled, windowYears });
+              }}
+            >
+              {seeds.map((value, i) => {
+                const r = seedResults[value.trim().replace(/\s+/g, " ")];
+                return (
+                  <div className="field" key={i}>
+                    <label htmlFor={`seed-${i}`}>Book {i + 1}</label>
+                    <input
+                      id={`seed-${i}`}
+                      value={value}
+                      maxLength={200}
+                      autoComplete="off"
+                      placeholder={i === 0 ? "A title you'd shelve yours next to" : "Optional"}
+                      onChange={(e) => setSeeds((prev) => prev.map((s, j) => (j === i ? e.target.value : s)) as [string, string, string])}
+                      aria-describedby={r ? `seed-${i}-note` : undefined}
+                    />
+                    {r && (
+                      <p id={`seed-${i}-note`} className={`seed-note seed-${r.status.toLowerCase()}`}>
+                        {SEED_NOTE[r.status](r)}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+              <div className="row form-actions">
+                <label htmlFor="window" className="small">Published in the last</label>
+                <select id="window" value={windowYears} onChange={(e) => setWindowYears(Number(e.target.value))}>
+                  {Array.from({ length: WINDOW_MAX - WINDOW_MIN + 1 }, (_, i) => WINDOW_MIN + i).map((n) => (
+                    <option key={n} value={n}>{n} years</option>
+                  ))}
+                </select>
+                <button type="submit" className="btn btn-primary" disabled={filled.length === 0 || phase === "running"}>
+                  {phase === "running" ? "Finding comps" : "Find comps"}
+                </button>
+              </div>
+              {filled.length === 0 && phase !== "running" && <p className="small muted" style={{ marginTop: 8 }}>Add at least one book to start.</p>}
+            </form>
+            <div className="row presets">
+              <span className="small muted">Try one:</span>
+              {PRESETS.map((p) => (
+                <button key={p.label} type="button" className="preset" disabled={phase === "running"} onClick={() => applyPreset(p)}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </section>
 
-      {agent.length > 0 && <AgentLog agent={agent} tools={tools} />}
-
-      {error && (
-        <div className="panel error-panel" role="alert">
-          <p>{error.message}</p>
-          {error.retryable && (
-            <button type="button" className="btn" onClick={retry}>
-              Try again
-            </button>
+          {phase !== "idle" && (
+            <section className="tool-section" aria-label="Progress">
+              <ol className="steps" aria-live="polite">
+                {STEPS.map((s, i) => {
+                  const failedHere = phase === "error" && i === Math.max(stepIndex, 0);
+                  const status = failedHere ? "failed" : phase === "done" || i < stepIndex ? "done" : i === stepIndex ? "active" : "pending";
+                  return (
+                    <li key={s.state} className={`step step-${status}`}>
+                      <span className="dot" aria-hidden="true" />
+                      {s.label}
+                      <span className="sr-only"> ({status})</span>
+                    </li>
+                  );
+                })}
+              </ol>
+              {agent.length > 0 && <AgentLog agent={agent} tools={tools} />}
+              {error && (
+                <div className={`alert ${error.state === "RATE_LIMITED" ? "alert-wait" : "alert-fail"}`} role="alert" style={{ marginTop: 16 }}>
+                  <p>{error.message}</p>
+                  {error.retryable && (
+                    <button type="button" className="btn btn-primary" onClick={retry}>
+                      Try again
+                    </button>
+                  )}
+                </div>
+              )}
+            </section>
           )}
         </div>
-      )}
 
-      <div className="grid">
         <div>
+          {phase === "idle" && <RulesPanel windowYears={windowYears} popularityMax={popularityMax} />}
           {result && (
             <Shelf
               key={result.accepted.map((v) => v.book.id).join()}
@@ -250,39 +362,68 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
               onWiden={canWiden ? widen : undefined}
             />
           )}
-
           {sentence && (
-            <section className="panel" aria-labelledby="sentence-h">
+            <section className="tool-section" aria-labelledby="sentence-h">
               <h2 id="sentence-h">Your comp line</h2>
-              <label htmlFor="my-title" className="small">Your book's title (optional)</label>
+              <label htmlFor="my-title" className="small" style={{ marginTop: 12 }}>Your book&apos;s title (optional)</label>
               <input id="my-title" value={myTitle} maxLength={120} onChange={(e) => setMyTitle(e.target.value)} placeholder="My novel" />
               <blockquote className="sentence">{sentence}</blockquote>
               {result?.accepted.length === 1 && (
                 <p className="small muted">One comp is weaker than two in a query. Widen the window or add a seed book.</p>
               )}
-              <div className="row">
-                <button type="button" className="btn" onClick={() => copy("sentence", sentence)}>
+              <div className="row" style={{ marginTop: 12 }}>
+                <button type="button" className="btn btn-primary" onClick={() => copy("sentence", sentence)}>
                   {copied === "sentence" ? "Copied" : "Copy line"}
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={() => copy("link", window.location.href)}>
+                <button type="button" className="btn btn-secondary" onClick={() => copy("link", window.location.href)}>
                   {copied === "link" ? "Link copied" : "Copy share link"}
                 </button>
               </div>
-              {copied === "failed" && <p className="small warn" role="status">Your browser blocked copying. Select the text above and copy it by hand.</p>}
+              {copied === "failed" && <p className="small warn" role="status" style={{ marginTop: 8 }}>Your browser blocked copying. Select the text above and copy it by hand.</p>}
             </section>
           )}
-
           {alsoLoveEnabled && alsoLoveIds.length > 0 && <AlsoLove compIds={alsoLoveIds} />}
-
-          <CheckComps windowYears={windowYears} replacement={replacement} />
+          {result && (
+            <p className="small muted" style={{ marginTop: 20 }}>
+              See what a plain LLM said for the same books in the{" "}
+              <button type="button" className="link-btn" onClick={() => setTab("llm")}>Compare with an LLM</button> tab.
+            </p>
+          )}
         </div>
-
-        {phase !== "idle" && <Baseline data={baseline} loading={baselineLoading} />}
       </div>
+    );
+  }
+}
 
-      <footer className="foot small muted">
-        Reader data from Qloo. Publication years cross-checked with Open Library.
-      </footer>
-    </main>
+const TABS: { id: Tab; label: string }[] = [
+  { id: "find", label: "Find comps" },
+  { id: "check", label: "Check my comps" },
+  { id: "llm", label: "Compare with an LLM" },
+];
+
+const FRAME_NOTE: Record<Tab, string> = {
+  find: "Live search on Qloo reader data",
+  check: "Same rules as the shelf",
+  llm: "Same books, plain LLM, same rules",
+};
+
+type Tab = "find" | "check" | "llm";
+
+function SpineMark() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="6" y="7" width="5" height="18" rx="1" fill="#f4f4f5" />
+      <rect x="12.5" y="9" width="5" height="16" rx="1" fill="#a1a1aa" />
+      <rect x="19" y="6" width="5" height="19" rx="1" fill="#f4f4f5" />
+      <rect x="4" y="25" width="24" height="3" rx="1" fill="#a1a1aa" />
+    </svg>
+  );
+}
+
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+    </svg>
   );
 }

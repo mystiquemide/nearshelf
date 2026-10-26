@@ -3,7 +3,7 @@ import type { BaselineResponse } from "./types";
 
 export function Baseline({ data, loading }: { data: BaselineResponse | null; loading: boolean }) {
   return (
-    <section className="panel baseline" aria-labelledby="baseline-h" aria-busy={loading}>
+    <section className="tool-section baseline" aria-labelledby="baseline-h" aria-busy={loading}>
       <h2 id="baseline-h">What a plain LLM said</h2>
       {loading && <p className="muted">Asking the model the same question</p>}
       {!loading && data?.state === "UNAVAILABLE" && <p className="muted">{data.message}</p>}
