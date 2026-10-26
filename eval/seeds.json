@@ -1,0 +1,10 @@
+[
+  { "genre": "epic fantasy", "seeds": ["The Jasmine Throne", "The Spear Cuts Through Water", "Godkiller"] },
+  { "genre": "cozy fantasy", "seeds": ["Legends & Lattes", "The House in the Cerulean Sea", "Emily Wilde's Encyclopaedia of Faeries"] },
+  { "genre": "literary", "seeds": ["The Bee Sting", "Western Lane", "Small Things Like These"] },
+  { "genre": "book club", "seeds": ["Pineapple Street", "Black Cake", "Memphis"] },
+  { "genre": "thriller", "seeds": ["Razorblade Tears", "The It Girl", "Rock Paper Scissors"] },
+  { "genre": "mystery", "seeds": ["The Maid", "Everyone in My Family Has Killed Someone", "The Paris Apartment"] },
+  { "genre": "horror", "seeds": ["The Book Eaters", "The Daughter of Doctor Moreau", "Siren Queen"] },
+  { "genre": "science fiction", "seeds": ["The Witch King", "Cloud Cuckoo Land", "The Candy House"] }
+]

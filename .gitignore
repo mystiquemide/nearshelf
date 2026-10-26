@@ -8,3 +8,4 @@ next-env.d.ts
 .vercel/
 PROJECT_PLAN.md
 PROJECT_STATE.md
+eval/raw/

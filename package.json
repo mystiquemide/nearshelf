@@ -7,8 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "vitest run",
+    "eval": "node eval/run.mjs"
   },
   "engines": {
     "node": ">=22"

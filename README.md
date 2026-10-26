@@ -78,6 +78,14 @@ npm run typecheck
 npm run build
 ```
 
+To compare Nearshelf with the plain LLM across the seed sets in `eval/seeds.json`, run the app with both keys set and then:
+
+```bash
+npm run eval -- http://localhost:3000
+```
+
+It writes aggregate counts to `eval/results.json` and stops without writing anything if Qloo or the LLM can't check every title.
+
 Tests use synthetic data and scripted models. They cover the rules, the agent's guardrails, fallback behavior, the Qloo client's errors and retries, and the cache.
 
 ## Project layout
@@ -91,6 +99,7 @@ lib/rules/        rule engine and rule labels
 lib/run/          run session, seed resolution, comp checking, rate limit
 lib/llm/          plain-LLM comparison
 lib/openlibrary/  Open Library cross-check for publication years
+eval/             LLM vs Nearshelf comparison script and seed sets
 tests/
 ```
 
