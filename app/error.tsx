@@ -9,15 +9,16 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <main className="wrap">
-      <section className="panel error-panel" role="alert">
+    <main className="simple">
+      <div role="alert">
+        <p className="label">Nearshelf</p>
         <h1>Something broke on this page</h1>
         <p>Your search is saved in the link, so reloading brings it back.</p>
         <div className="row">
           <button type="button" className="btn btn-primary" onClick={() => reset()}>Reload</button>
-          <a className="btn btn-ghost" href="/">Start over</a>
+          <a className="btn btn-secondary" href="/">Start over</a>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

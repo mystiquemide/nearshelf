@@ -11,10 +11,10 @@ export function GET(req: Request) {
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#f6f1e7", color: "#23201b", padding: 64, fontFamily: "Georgia, serif" }}>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#0f1115", color: "#f4f4f5", padding: 64, fontFamily: "Georgia, serif" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 72, fontWeight: 700 }}>Nearshelf</div>
-          <div style={{ fontSize: 34, color: "#6b6457", marginTop: 12 }}>
+          <div style={{ fontSize: 34, color: "#a1a1aa", marginTop: 12 }}>
             {seeds.length ? "Comps for books like" : "Recent, mid-list comp titles backed by reader data"}
           </div>
           {seeds.map((s) => (
