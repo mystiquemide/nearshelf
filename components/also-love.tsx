@@ -28,12 +28,14 @@ export function AlsoLove({ compIds }: { compIds: string[] }) {
     };
   }, [compIds]);
 
+  // Qloo has no cross-domain signal for some books. Hide the section rather than show empty boxes.
+  if (state === "error" || (state === "done" && data && SECTIONS.every(({ key }) => !data[key]?.length))) return null;
+
   return (
     <section className="tool-section" aria-labelledby="also-h" aria-busy={state === "loading"}>
       <h2 id="also-h">Readers of these comps also love</h2>
       <p className="muted small">From Qloo, based on your books and your top comps. Useful for ad targeting and newsletter swaps.</p>
       {state === "loading" && <p className="muted">Asking Qloo</p>}
-      {state === "error" && <p className="muted">This isn't available right now.</p>}
       {state === "done" && data && (
         <div className="also">
           {SECTIONS.map(({ key, label }) => (
