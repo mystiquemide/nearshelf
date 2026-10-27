@@ -9,9 +9,9 @@
   --muted: #71717a;
   --on-ink: #f4f4f5;
   --on-ink-muted: #a1a1aa;
-  --pass: #059669;
+  --pass: #047857;
   --pass-bg: #ecfdf5;
-  --fail: #dc2626;
+  --fail: #b91c1c;
   --fail-bg: #fef2f2;
   --wait: #b45309;
   --wait-bg: #fffbeb;
@@ -202,3 +202,58 @@ textarea { resize: vertical; }
 .on-ink .frame .btn-primary:hover:not(:disabled) { background: #27272a; }
 .on-ink .frame .btn-secondary { background: var(--warm); color: var(--ink); border-color: var(--line); }
 .on-ink .frame .btn-secondary:hover:not(:disabled) { border-color: #d4d4d8; }
+
+/* Hero line art */
+.hero { position: relative; overflow: hidden; }
+.hero-inner { position: relative; z-index: 1; }
+.hero-art { position: absolute; inset: 0; pointer-events: none; display: flex; justify-content: space-between; }
+.hero-art-side { width: 300px; height: 560px; margin-top: 40px; opacity: 0.9; }
+.hero-art-side.flip { transform: scaleX(-1); }
+@media (max-width: 899px) { .hero-art-side { width: 180px; height: 336px; opacity: 0.6; } }
+@media (max-width: 639px) { .hero-art-side { margin-top: 8px; width: 140px; height: 262px; opacity: 0.45; } }
+
+/* Frame with sidebar */
+.frame { margin-top: 56px; }
+.frame-title { font-weight: 600; color: var(--ink); }
+.status { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font: 500 12px/1.6 var(--sans); }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status-on { color: var(--pass); background: var(--pass-bg); }
+.status-off { color: var(--wait); background: var(--wait-bg); }
+.frame-main { display: grid; grid-template-columns: minmax(0, 1fr); }
+.sidebar { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--warm); }
+.side-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: #3f3f46; font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+.side-tab:hover { background: #f4f4f5; }
+.side-tab[aria-selected="true"] { background: var(--paper); color: var(--ink); border-color: var(--line); }
+.sidebar-note { display: none; }
+@media (min-width: 900px) {
+  .frame-main { grid-template-columns: 220px minmax(0, 1fr); }
+  .sidebar { flex-direction: column; flex-wrap: nowrap; padding: 20px 12px; border-bottom: 0; border-right: 1px solid var(--line); }
+  .side-tab { width: 100%; }
+  .sidebar-note { display: block; margin-top: auto; padding: 12px; font-size: 13px; color: var(--muted); }
+}
+
+/* Empty shelf (idle) */
+.empty-shelf { padding: 8px 8px 0; }
+.empty-shelf-books { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+.empty-shelf-books span { width: 34px; border: 1.5px dashed #d4d4d8; border-bottom: 0; border-radius: 4px 4px 0 0; }
+.empty-shelf-board { height: 10px; background: #8a6a45; border-radius: 2px; }
+.empty-shelf-label { margin: 10px 0 20px; font: 500 13px/1.4 var(--sans); color: var(--muted); }
+.rule-list { list-style: none; padding: 0; margin: 12px 0 16px; }
+.rule-list li { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+.rule-icon { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); color: var(--ink); }
+
+/* Presets, chips, buttons with icons */
+.preset { display: inline-flex; align-items: center; gap: 8px; }
+.swatch { width: 8px; height: 14px; border-radius: 2px; }
+.chip { gap: 4px; }
+.agent-log summary { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tool { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tool-done svg { color: var(--pass); }
+.tool-error svg { color: var(--fail); }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Spines slide onto the shelf in order */
+.shelf li { animation: shelve 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+@keyframes shelve { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .shelf li, .spin { animation: none; } }

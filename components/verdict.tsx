@@ -1,5 +1,8 @@
+import { CircleAlert, CircleCheck, CircleX, SearchX } from "lucide-react";
 import { describeFailure } from "@/lib/rules/labels";
 import type { CheckResult } from "./types";
+
+const ICON = { ACCEPTED: CircleCheck, REJECTED: CircleX, NOT_FOUND: SearchX, NO_QLOO_DATA: CircleAlert } as const;
 
 const LABEL: Record<CheckResult["status"], string> = {
   ACCEPTED: "Passes",
@@ -18,9 +21,13 @@ export function VerdictRow({ r, replacement }: { r: CheckResult; replacement?: s
           ? `Real book${r.external?.year ? ` (${r.external.year})` : ""}, but Qloo has no reader data for it`
           : `${r.book?.year ?? ""}${r.book?.popularity != null ? `, popularity ${r.book.popularity.toFixed(2)}` : ""}`;
 
+  const Icon = ICON[r.status];
   return (
     <li className="verdict">
-      <span className={`chip chip-${r.status.toLowerCase()}`}>{LABEL[r.status]}</span>
+      <span className={`chip chip-${r.status.toLowerCase()}`}>
+        <Icon size={13} strokeWidth={2} aria-hidden="true" />
+        {LABEL[r.status]}
+      </span>
       <span className="book">
         {r.input.title}
         {r.input.author ? ` by ${r.input.author}` : ""}

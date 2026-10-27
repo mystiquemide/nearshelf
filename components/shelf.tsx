@@ -32,8 +32,8 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
       ) : (
         <>
           <ul className="shelf" role="list">
-            {result.accepted.map(({ book }) => (
-              <li key={book.id}>
+            {result.accepted.map(({ book }, i) => (
+              <li key={book.id} style={{ "--i": i } as React.CSSProperties}>
                 <button
                   type="button"
                   className="spine"

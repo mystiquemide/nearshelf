@@ -26,5 +26,5 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default function Home() {
-  return <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} />;
+  return <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)} />;
 }

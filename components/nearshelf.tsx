@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { readNdjson } from "@/lib/client/ndjson";
 import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
+import { Copy, Link2, ListChecks, Scale, Search } from "lucide-react";
 import { AgentLog } from "./agent-log";
+import { HeroArt } from "./hero-art";
 import { AlsoLove } from "./also-love";
 import { Baseline } from "./baseline";
 import { RulesPanel } from "./rules-panel";
@@ -13,11 +15,11 @@ import { Shelf } from "./shelf";
 import type { AgentEvent, BaselineResponse, RunError, RunEvent, RunResult, SeedResolution, StepState, ToolEvent } from "./types";
 
 // Inputs only. Every result shown for a preset comes from a live run.
-const PRESETS: { label: string; seeds: [string, string, string] }[] = [
-  { label: "Epic fantasy", seeds: ["The Jasmine Throne", "The Spear Cuts Through Water", "Godkiller"] },
-  { label: "Literary", seeds: ["The Bee Sting", "Western Lane", "Small Things Like These"] },
-  { label: "Thriller", seeds: ["Razorblade Tears", "The It Girl", "Rock Paper Scissors"] },
-  { label: "Books that don't exist", seeds: ["The Glass Orchard of Velmora", "Saltwind Cathedral", "A Lantern for Nobody"] },
+const PRESETS: { label: string; color: string; seeds: [string, string, string] }[] = [
+  { label: "Epic fantasy", color: "#b45309", seeds: ["The Jasmine Throne", "The Spear Cuts Through Water", "Godkiller"] },
+  { label: "Literary", color: "#059669", seeds: ["The Bee Sting", "Western Lane", "Small Things Like These"] },
+  { label: "Thriller", color: "#dc2626", seeds: ["Razorblade Tears", "The It Girl", "Rock Paper Scissors"] },
+  { label: "Books that don't exist", color: "#71717a", seeds: ["The Glass Orchard of Velmora", "Saltwind Cathedral", "A Lantern for Nobody"] },
 ];
 
 const STEPS: { state: StepState; label: string }[] = [
@@ -34,7 +36,15 @@ const SEED_NOTE: Record<SeedResolution["status"], (s: SeedResolution) => string>
 
 type Phase = "idle" | "running" | "done" | "error";
 
-export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { popularityMax: number | null; alsoLoveEnabled?: boolean }) {
+export function Nearshelf({
+  popularityMax,
+  alsoLoveEnabled = false,
+  qlooReady = false,
+}: {
+  popularityMax: number | null;
+  alsoLoveEnabled?: boolean;
+  qlooReady?: boolean;
+}) {
   const [seeds, setSeeds] = useState<[string, string, string]>(["", "", ""]);
   const [windowYears, setWindowYears] = useState(WINDOW_DEFAULT);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -203,7 +213,8 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
 
       <main>
         <section className="hero on-ink" aria-labelledby="hero-h">
-          <div className="container">
+          <HeroArt />
+          <div className="container hero-inner">
             <div className="hero-copy">
               <h1 id="hero-h">
                 {sharedSeeds ? `Comps for books like ${sharedSeeds.join(", ")}` : "Comp titles your query letter can stand on"}
@@ -219,27 +230,31 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
               <p className="hero-source">Reader data from Qloo&apos;s taste graph</p>
             </div>
 
-            <div className="tabs" role="tablist" aria-label="Tool">
-              {TABS.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  role="tab"
-                  id={`tab-${t.id}`}
-                  className="tab"
-                  aria-selected={tab === t.id}
-                  aria-controls="tool-panel"
-                  onClick={() => setTab(t.id)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-
             <div className="frame" id="tool">
               <div className="frame-bar">
-                <span>Nearshelf</span>
-                <span>{FRAME_NOTE[tab]}</span>
+                <span className="frame-title">Nearshelf</span>
+                <span className={`status ${qlooReady ? "status-on" : "status-off"}`}>
+                  {qlooReady ? "Qloo reader data connected" : "Qloo not connected yet"}
+                </span>
+              </div>
+              <div className="frame-main">
+              <div className="sidebar" role="tablist" aria-label="Tool" aria-orientation="vertical">
+                {TABS.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    role="tab"
+                    id={`tab-${t.id}`}
+                    className="side-tab"
+                    aria-selected={tab === t.id}
+                    aria-controls="tool-panel"
+                    onClick={() => setTab(t.id)}
+                  >
+                    <t.icon size={16} strokeWidth={1.75} aria-hidden="true" />
+                    {t.label}
+                  </button>
+                ))}
+                <p className="sidebar-note">{FRAME_NOTE[tab]}</p>
               </div>
               <div className="frame-body" id="tool-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
                 {tab === "find" && findPanel()}
@@ -256,6 +271,7 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
                   ) : (
                     <Baseline data={baseline} loading={baselineLoading} />
                   ))}
+              </div>
               </div>
             </div>
           </div>
@@ -316,6 +332,7 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
               <span className="small muted">Try one:</span>
               {PRESETS.map((p) => (
                 <button key={p.label} type="button" className="preset" disabled={phase === "running"} onClick={() => applyPreset(p)}>
+                  <span className="swatch" style={{ background: p.color }} aria-hidden="true" />
                   {p.label}
                 </button>
               ))}
@@ -373,9 +390,11 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
               )}
               <div className="row" style={{ marginTop: 12 }}>
                 <button type="button" className="btn btn-primary" onClick={() => copy("sentence", sentence)}>
+                  <Copy size={15} strokeWidth={1.75} aria-hidden="true" />
                   {copied === "sentence" ? "Copied" : "Copy line"}
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => copy("link", window.location.href)}>
+                  <Link2 size={15} strokeWidth={1.75} aria-hidden="true" />
                   {copied === "link" ? "Link copied" : "Copy share link"}
                 </button>
               </div>
@@ -395,10 +414,10 @@ export function Nearshelf({ popularityMax, alsoLoveEnabled = false }: { populari
   }
 }
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "find", label: "Find comps" },
-  { id: "check", label: "Check my comps" },
-  { id: "llm", label: "Compare with an LLM" },
+const TABS: { id: Tab; label: string; icon: typeof Search }[] = [
+  { id: "find", label: "Find comps", icon: Search },
+  { id: "check", label: "Check my comps", icon: ListChecks },
+  { id: "llm", label: "Compare with an LLM", icon: Scale },
 ];
 
 const FRAME_NOTE: Record<Tab, string> = {

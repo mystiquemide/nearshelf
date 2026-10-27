@@ -1,3 +1,4 @@
+import { Bot, CircleCheck, CircleX, LoaderCircle, Wrench } from "lucide-react";
 import type { AgentEvent, ToolEvent } from "./types";
 
 const TOOL_LABEL: Record<ToolEvent["name"], string> = {
@@ -13,15 +14,22 @@ export function AgentLog({ agent, tools }: { agent: AgentEvent[]; tools: ToolEve
     <details className="agent-log" open>
       <summary>
         {first.mode === "agent" ? (
-          <>Agent: <code>{first.model}</code> chose these tool calls</>
+          <><Bot size={16} strokeWidth={1.75} aria-hidden="true" /> Agent <code>{first.model}</code> chose these tool calls</>
         ) : (
-          <>Fixed sequence (no agent model)</>
+          <><Wrench size={16} strokeWidth={1.75} aria-hidden="true" /> Fixed sequence (no agent model)</>
         )}
       </summary>
       {tools.length > 0 && (
         <ol role="list">
           {tools.map((t, i) => (
             <li key={i} className={`tool tool-${t.status}`}>
+              {t.status === "start" ? (
+                <LoaderCircle className="spin" size={15} aria-hidden="true" />
+              ) : t.status === "error" ? (
+                <CircleX size={15} aria-hidden="true" />
+              ) : (
+                <CircleCheck size={15} aria-hidden="true" />
+              )}
               <code>{TOOL_LABEL[t.name]}</code>
               <span className="small muted">{t.status === "start" ? " running" : t.status === "error" ? ` failed after ${t.ms}ms` : ` ${t.ms}ms`}</span>
             </li>
