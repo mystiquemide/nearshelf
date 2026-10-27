@@ -23,7 +23,7 @@ describe("readNdjson", () => {
 describe("describeFailure", () => {
   it("names the rule and the failing value", () => {
     expect(describeFailure({ rule: "too_old", value: 1997, limit: 2023 })).toBe("Too old: published 1997, window starts 2023");
-    expect(describeFailure({ rule: "too_big", value: 0.987, limit: 0.8 })).toBe("Too big: popularity 0.99, ceiling 0.80");
+    expect(describeFailure({ rule: "too_big", value: 0.987, limit: 0.8 })).toBe("Too big: popularity 0.987, ceiling 0.800");
     expect(describeFailure({ rule: "is_seed" })).toBe("One of your own books");
   });
 });

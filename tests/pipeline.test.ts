@@ -96,6 +96,8 @@ describe("titlesMatch", () => {
     expect(titlesMatch("Seed Two: A Novel", "Seed Two")).toBe(true);
     expect(titlesMatch("Godkiller Returns", "Godkiller")).toBe(false);
     expect(titlesMatch("Anything", "")).toBe(false);
+    expect(titlesMatch("The Jasmine Throne (The Burning Kingdoms, #1)", "The Jasmine Throne")).toBe(true);
+    expect(titlesMatch("Bookshops & Bonedust (Legends & Lattes, #0)", "Legends & Lattes")).toBe(false);
   });
 });
 

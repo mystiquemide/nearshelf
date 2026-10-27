@@ -19,7 +19,7 @@ export function VerdictRow({ r, replacement }: { r: CheckResult; replacement?: s
         ? "Couldn't find this book in Qloo or Open Library"
         : r.status === "NO_QLOO_DATA"
           ? `Real book${r.external?.year ? ` (${r.external.year})` : ""}, but Qloo has no reader data for it`
-          : `${r.book?.year ?? ""}${r.book?.popularity != null ? `, popularity ${r.book.popularity.toFixed(2)}` : ""}`;
+          : `${r.book?.year ?? ""}${r.book?.popularity != null ? `, popularity ${r.book.popularity.toFixed(3)}` : ""}`;
 
   const Icon = ICON[r.status];
   return (

@@ -1,6 +1,6 @@
 import type { RuleFailure } from "./engine";
 
-const pct = (n: unknown) => (typeof n === "number" ? n.toFixed(2) : "?");
+const pct = (n: unknown) => (typeof n === "number" ? n.toFixed(3) : "?");
 
 // What the author reads next to a rejected title. Names the rule and the value that failed.
 export function describeFailure(f: RuleFailure): string {

@@ -16,9 +16,9 @@ import type { AgentEvent, BaselineResponse, RunError, RunEvent, RunResult, SeedR
 
 // Inputs only. Every result shown for a preset comes from a live run.
 const PRESETS: { label: string; color: string; seeds: [string, string, string] }[] = [
-  { label: "Epic fantasy", color: "#b45309", seeds: ["The Jasmine Throne", "The Spear Cuts Through Water", "Godkiller"] },
-  { label: "Literary", color: "#059669", seeds: ["The Bee Sting", "Western Lane", "Small Things Like These"] },
-  { label: "Thriller", color: "#dc2626", seeds: ["Razorblade Tears", "The It Girl", "Rock Paper Scissors"] },
+  { label: "Epic fantasy", color: "#b45309", seeds: ["The Jasmine Throne", "The Blacktongue Thief", "The Book Eaters"] },
+  { label: "Literary", color: "#059669", seeds: ["Western Lane", "The Candy House", "Memphis"] },
+  { label: "Thriller", color: "#dc2626", seeds: ["Such a Quiet Place", "The It Girl", "Rock Paper Scissors"] },
   { label: "Books that don't exist", color: "#71717a", seeds: ["The Glass Orchard of Velmora", "Saltwind Cathedral", "A Lantern for Nobody"] },
 ];
 
@@ -143,9 +143,17 @@ export function Nearshelf({
       setMenuOpen(false);
       document.getElementById("tool")?.scrollIntoView({ block: "start" });
     };
+    // A second click on a "#check" link doesn't change the hash, so clicks are handled too.
+    const onClick = (e: MouseEvent) => {
+      if ((e.target as Element | null)?.closest?.('a[href="#check"]')) window.setTimeout(onHash, 0);
+    };
     onHash();
     window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    document.addEventListener("click", onClick);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      document.removeEventListener("click", onClick);
+    };
   }, []);
 
   useEffect(() => {

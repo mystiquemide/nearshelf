@@ -6,7 +6,7 @@ export function RulesPanel({ windowYears, popularityMax }: { windowYears: number
   const rules = [
     { icon: Users, text: "Qloo finds books that readers of your seed books also love." },
     { icon: CalendarClock, text: `It was published in the last ${windowYears} years.` },
-    ...(popularityMax !== null ? [{ icon: Gauge, text: `It isn't a megahit (popularity under ${popularityMax.toFixed(2)}).` }] : []),
+    ...(popularityMax !== null ? [{ icon: Gauge, text: `It isn't a megahit (popularity under ${popularityMax.toFixed(3)}).` }] : []),
     { icon: BookOpen, text: "It isn't one of your own seed books." },
   ];
   return (

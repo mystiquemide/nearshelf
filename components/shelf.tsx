@@ -21,7 +21,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
       <h2 id="shelf-h">Your comps</h2>
       <p className="muted small">
         Published {result.yearMin} or later
-        {result.popularityMax !== null ? `, popularity under ${result.popularityMax.toFixed(2)}` : ", size rule off until calibrated"}. Every book here passed every rule.
+        {result.popularityMax !== null ? `, popularity under ${result.popularityMax.toFixed(3)}` : ", size rule off until calibrated"}. Every book here passed every rule.
       </p>
 
       {result.accepted.length === 0 ? (
@@ -68,7 +68,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
           <dt>Published</dt>
           <dd>{open.book.year}</dd>
           <dt>Popularity</dt>
-          <dd>{open.book.popularity !== null ? open.book.popularity.toFixed(2) : "not used"}</dd>
+          <dd>{open.book.popularity !== null ? open.book.popularity.toFixed(3) : "not used"}</dd>
           <dt>Readers found from</dt>
           <dd>{seedTitles.join(", ")}</dd>
         </dl>

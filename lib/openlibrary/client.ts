@@ -48,8 +48,10 @@ export function normalizeTitle(s: string): string {
 }
 
 // Exact match, or the candidate is the typed title plus a subtitle.
+// Qloo appends the series in brackets: "The Jasmine Throne (The Burning Kingdoms, #1)".
 export function titlesMatch(candidate: string, typed: string): boolean {
-  const c = normalizeTitle(candidate.split(":")[0] ?? candidate);
+  const base = candidate.replace(/\s*\([^()]*#\s*[\d.]+\)\s*$/, "");
+  const c = normalizeTitle(base.split(":")[0] ?? base);
   const t = normalizeTitle(typed);
   return t.length > 0 && (c === t || normalizeTitle(candidate) === t);
 }

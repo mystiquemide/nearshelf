@@ -90,3 +90,12 @@ describe("toBook", () => {
     expect(toBook({ entity_id: "x", name: "T", popularity: 7, properties: { publication_date: "2022-05-03" } })).toMatchObject({ popularity: null, year: 2022 });
   });
 });
+
+describe("toBook with Qloo's book shape", () => {
+  // Field layout from the Phase 0 probe. Values are synthetic.
+  it("reads the author from disambiguation and decodes entities", () => {
+    expect(toBook({ entity_id: "X", name: "Blood &amp; Steel (Sample Series, #1)", popularity: 0.95, disambiguation: "2023, Sample  Writer", properties: { publication_year: "2023" } })).toEqual({
+      id: "X", title: "Blood & Steel (Sample Series, #1)", author: "Sample Writer", year: 2023, popularity: 0.95,
+    });
+  });
+});
