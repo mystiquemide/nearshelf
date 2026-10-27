@@ -69,13 +69,26 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
           />
           <div className="llm-grid">
             <div className="llm-col">
-              <p className="label">What a plain LLM did in one test run</p>
-              <ul className="plain-list">
-                <li><XCircle size={16} aria-hidden="true" /> Returned all three seed books as their own comps</li>
-                <li><XCircle size={16} aria-hidden="true" /> Credited two of them to the wrong authors</li>
-                <li><XCircle size={16} aria-hidden="true" /> Suggested a title that doesn&apos;t appear to exist</li>
-              </ul>
-              <p className="small muted">Seeds: The Jasmine Throne, The Spear Cuts Through Water, Godkiller.</p>
+              {evalTotals ? (
+                <>
+                  <p className="label">What a plain LLM did across {evalTotals.sets} seed sets</p>
+                  <ul className="plain-list">
+                    <li><XCircle size={16} aria-hidden="true" /> Only {evalTotals.llmPassed} of {evalTotals.llmTitles} suggested titles passed every rule</li>
+                    <li><XCircle size={16} aria-hidden="true" /> {evalTotals.llmTooOld} were too old and {evalTotals.llmTooBig} were too big to cite</li>
+                    <li><XCircle size={16} aria-hidden="true" /> {evalTotals.llmEchoedSeed} were your own seed books and {evalTotals.llmWrongAuthor} had the wrong author</li>
+                  </ul>
+                  <p className="small muted">Same seed books, same rules, measured with npm run eval.</p>
+                </>
+              ) : (
+                <>
+                  <p className="label">What a plain LLM gets wrong</p>
+                  <ul className="plain-list">
+                    <li><XCircle size={16} aria-hidden="true" /> Suggests books that are too old or too big to cite</li>
+                    <li><XCircle size={16} aria-hidden="true" /> Returns your own seed books as comps</li>
+                    <li><XCircle size={16} aria-hidden="true" /> Credits books to the wrong author</li>
+                  </ul>
+                </>
+              )}
             </div>
             <div className="llm-col">
               <p className="label">What Nearshelf can&apos;t do</p>
@@ -192,7 +205,7 @@ function EvalStrip({ t }: { t: EvalTotals }) {
       <p className="label">Across {t.sets} seed sets, measured with npm run eval</p>
       <div className="facts">
         <div className="fact"><p className="fact-num">{t.llmPassed} of {t.llmTitles}</p><p>plain-LLM titles passed every rule</p></div>
-        <div className="fact"><p className="fact-num">{t.llmNotFound}</p><p>LLM titles couldn&apos;t be found in Qloo or Open Library</p></div>
+        <div className="fact"><p className="fact-num">{t.llmEchoedSeed}</p><p>LLM titles were the author&apos;s own seed books</p></div>
         <div className="fact"><p className="fact-num">{t.nearshelfSetsWithThreePlus} of {t.sets}</p><p>seed sets got three or more Nearshelf comps</p></div>
       </div>
     </div>

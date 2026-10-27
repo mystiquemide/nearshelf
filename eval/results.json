@@ -1,0 +1,165 @@
+{
+  "ranAt": "2026-10-27T05:41:20.594Z",
+  "base": "http://localhost:3123",
+  "windowYears": 3,
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "totals": {
+    "sets": 8,
+    "nearshelfComps": 48,
+    "nearshelfSetsWithThreePlus": 8,
+    "llmTitles": 48,
+    "llmPassed": 7,
+    "llmNotFound": 0,
+    "llmNoReaderData": 7,
+    "llmTooOld": 32,
+    "llmTooBig": 14,
+    "llmEchoedSeed": 11,
+    "llmWrongAuthor": 10
+  },
+  "perSet": [
+    {
+      "genre": "epic fantasy",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 2564,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 2,
+        "tooOld": 4,
+        "tooBig": 2,
+        "echoedSeed": 1,
+        "wrongAuthor": 1
+      }
+    },
+    {
+      "genre": "cozy fantasy",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 2140,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 1,
+        "tooOld": 4,
+        "tooBig": 4,
+        "echoedSeed": 2,
+        "wrongAuthor": 1
+      }
+    },
+    {
+      "genre": "literary",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 2093,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 1,
+        "notFound": 0,
+        "noReaderData": 1,
+        "tooOld": 3,
+        "tooBig": 1,
+        "echoedSeed": 2,
+        "wrongAuthor": 2
+      }
+    },
+    {
+      "genre": "book club",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 2411,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 6,
+        "notFound": 0,
+        "noReaderData": 0,
+        "tooOld": 0,
+        "tooBig": 0,
+        "echoedSeed": 0,
+        "wrongAuthor": 1
+      }
+    },
+    {
+      "genre": "thriller",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 7473,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 2,
+        "tooOld": 4,
+        "tooBig": 1,
+        "echoedSeed": 0,
+        "wrongAuthor": 2
+      }
+    },
+    {
+      "genre": "mystery",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 15018,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 0,
+        "tooOld": 6,
+        "tooBig": 6,
+        "echoedSeed": 3,
+        "wrongAuthor": 0
+      }
+    },
+    {
+      "genre": "horror",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 3355,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 0,
+        "tooOld": 6,
+        "tooBig": 0,
+        "echoedSeed": 3,
+        "wrongAuthor": 2
+      }
+    },
+    {
+      "genre": "science fiction",
+      "nearshelf": {
+        "accepted": 6,
+        "ms": 2985,
+        "mode": "agent"
+      },
+      "llm": {
+        "titles": 6,
+        "passed": 0,
+        "notFound": 0,
+        "noReaderData": 1,
+        "tooOld": 5,
+        "tooBig": 0,
+        "echoedSeed": 0,
+        "wrongAuthor": 1
+      }
+    }
+  ]
+}

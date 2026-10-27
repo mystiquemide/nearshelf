@@ -58,7 +58,7 @@ If the model fails or stops early, a fixed sequence finishes the run from where 
 
 ## Why not just ask an LLM?
 
-The comparison panel answers this live. In one test run with *The Jasmine Throne*, *The Spear Cuts Through Water* and *Godkiller* as seeds, the plain model returned all three seed books as comps, credited two of them to the wrong authors, and suggested a title that doesn't appear to exist. Nearshelf can't make those mistakes, because a book only reaches the shelf if Qloo knows it and it passes every rule.
+The comparison panel answers this live, and `npm run eval` measures it. Across 8 seed sets in different genres, the plain LLM suggested 48 titles. Only 7 passed every rule: 32 were too old, 14 were too big, 11 were the author's own seed books, and 10 were credited to the wrong author. Nearshelf returned 6 comps for every set, each one a book Qloo knows that passes every rule.
 
 ## Run it locally
 
@@ -106,7 +106,8 @@ tests/
 ## Limits
 
 - Books only. Qloo's coverage of recent mid-list fiction decides how many comps a given genre gets.
-- The popularity ceiling is a single number for every genre, set from known megahits and mid-list titles.
+- The popularity ceiling (0.995) is one number for every genre. It was set from Qloo scores for known megahits (0.9996 and above) and mid-list titles (0.989 and below).
+- Qloo's coverage is thinner for 2022 and 2023 releases, so some recent seed books aren't found.
 - Open Library is a cross-check only. If it's down, Qloo's data is used alone.
 - The rate limit (20 runs per 10 minutes per IP) is enforced per server instance.
 

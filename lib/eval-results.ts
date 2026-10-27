@@ -7,7 +7,10 @@ export interface EvalTotals {
   nearshelfSetsWithThreePlus: number;
   llmTitles: number;
   llmPassed: number;
-  llmNotFound: number;
+  llmTooOld: number;
+  llmTooBig: number;
+  llmEchoedSeed: number;
+  llmWrongAuthor: number;
 }
 
 // eval/results.json only exists after a real `npm run eval`. Without it the page shows no numbers.
@@ -15,7 +18,7 @@ export function loadEvalTotals(): EvalTotals | null {
   try {
     const raw = JSON.parse(readFileSync(join(process.cwd(), "eval", "results.json"), "utf8")) as { totals?: Partial<EvalTotals> };
     const t = raw.totals;
-    const keys: (keyof EvalTotals)[] = ["sets", "nearshelfSetsWithThreePlus", "llmTitles", "llmPassed", "llmNotFound"];
+    const keys: (keyof EvalTotals)[] = ["sets", "nearshelfSetsWithThreePlus", "llmTitles", "llmPassed", "llmTooOld", "llmTooBig", "llmEchoedSeed", "llmWrongAuthor"];
     if (!t || !keys.every((k) => typeof t[k] === "number") || t.sets! < 1 || t.llmTitles! < 1) return null;
     return t as EvalTotals;
   } catch {
