@@ -37,7 +37,7 @@ describe("runComps", () => {
     if (result?.type !== "result") throw new Error("no result");
     expect(result.accepted.map((v) => v.book.id)).toEqual(["C1"]);
     expect(result.rejected.map((v) => [v.book.id, v.failures[0]?.rule])).toEqual([["S1", "is_seed"], ["C2", "too_old"]]);
-    expect(qloo.bookInsights).toHaveBeenCalledWith({ seedIds: ["S1", "S2"], publicationYearMin: 2023, popularityMax: 0.8, explainability: true, take: 30 });
+    expect(qloo.bookInsights).toHaveBeenCalledWith({ seedIds: ["S1", "S2"], publicationYearMin: 2023, explainability: true, take: 30 });
   });
 
   it("never calls Insights when no seed resolves, and tells fake apart from coverage gap", async () => {

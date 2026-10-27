@@ -82,8 +82,9 @@ export class RunSession {
     try {
       const insights = await this.deps.qloo.bookInsights({
         seedIds: seeds.map((b) => b.id),
+        // No popularity filter here on purpose: megahits come back from Qloo and the rule engine
+        // rejects them in plain view, so the size rule is enforced and shown, not delegated.
         publicationYearMin: min,
-        popularityMax: this.cfg.popularityMax ?? undefined,
         explainability: true,
         take: 30,
       });

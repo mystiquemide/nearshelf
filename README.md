@@ -1,5 +1,7 @@
 # Nearshelf
 
+[![CI](https://github.com/mystiquemide/nearshelf/actions/workflows/ci.yml/badge.svg)](https://github.com/mystiquemide/nearshelf/actions/workflows/ci.yml)
+
 Comp titles for novelists that are recent, mid-list and real, picked from Qloo reader data and checked against rules in code.
 
 No comp without a Qloo ID. The agent picks which tools to call, never which books to recommend, and a plain LLM's suggestions are checked against the same rules on the same screen.
@@ -36,13 +38,13 @@ Nearshelf gives the author comps that are actually read by the same readers as t
 | Step | Qloo call | What it gives Nearshelf |
 |---|---|---|
 | Resolve seeds | `GET /search` with `types=urn:entity:book` | The book's Qloo entity, author, year and popularity |
-| Find candidates | `GET /v2/insights` with `filter.type=urn:entity:book`, `signal.interests.entities`, `filter.publication_year.min`, `filter.popularity.max`, `feature.explainability=true`, `take=30` | Books the seeds' readers love, already narrowed by year and size |
+| Find candidates | `GET /v2/insights` with `filter.type=urn:entity:book`, `signal.interests.entities`, `filter.publication_year.min`, `feature.explainability=true`, `take=30` | Books the seeds' readers love, narrowed by year, with popularity scores for the size rule |
 | Check pasted and LLM titles | `GET /search` | Whether a title exists and what Qloo knows about it |
 | Readers also love | `GET /v2/insights` with `filter.type=urn:entity:podcast` or `urn:entity:tv_show`, signalled by the seeds and top comps | Where these readers spend time outside books |
 
 Qloo is the only source of candidates and popularity in the app. Remove it and there are no comps, no size rule and no evidence to show.
 
-Qloo silently ignores parameters it doesn't support, so the year and popularity filters aren't trusted on their own. The rule engine (`lib/rules/engine.ts`) re-checks every candidate, and a test proves a stale book is still rejected when the filter is dropped.
+The size rule is deliberately not sent to Qloo as a filter. Megahits come back as candidates and the rule engine (`lib/rules/engine.ts`) rejects them on screen with the score that failed, so every rule is enforced and visible in code. The year filter is sent to Qloo but re-checked too, and a test proves a stale book is still rejected when the filter is dropped.
 
 Responses are cached server-side for 24 hours, in memory per instance and in Next's data cache across instances, with identical in-flight requests merged into one call. Failed calls are never cached. No Qloo response data is stored in this repository.
 
