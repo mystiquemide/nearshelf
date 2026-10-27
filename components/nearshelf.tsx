@@ -6,7 +6,7 @@ import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
 import { Copy, Link2, ListChecks, Scale, Search } from "lucide-react";
 import { AgentLog } from "./agent-log";
-import { AlsoLove } from "./also-love";
+import { AlsoLove, useAlsoLove } from "./also-love";
 import { Baseline } from "./baseline";
 import { RulesPanel } from "./rules-panel";
 import { CheckComps } from "./check-comps";
@@ -183,6 +183,7 @@ export function Nearshelf({
     () => (result ? [...new Set([...Object.values(seedResults).flatMap((s) => (s.book ? [s.book.id] : [])), ...result.accepted.slice(0, 3).map((v) => v.book.id)])] : []),
     [result, seedResults],
   );
+  const alsoLove = useAlsoLove(alsoLoveIds, alsoLoveEnabled);
   const canWiden = (lastInput.current?.windowYears ?? WINDOW_MAX) < WINDOW_MAX;
 
   const startSearch = () => {
@@ -333,6 +334,7 @@ export function Nearshelf({
             </section>
           )}
           {result && <VersusLlm accepted={result.accepted.length} baseline={baseline} loading={baselineLoading} onOpen={() => setTab("llm")} />}
+          <AlsoLove value={alsoLove} className="also-wide" />
         </div>
 
         <div>
@@ -367,7 +369,7 @@ export function Nearshelf({
               {copied === "failed" && <p className="small warn" role="status" style={{ marginTop: 8 }}>Your browser blocked copying. Select the text above and copy it by hand.</p>}
             </section>
           )}
-          {alsoLoveEnabled && alsoLoveIds.length > 0 && <AlsoLove compIds={alsoLoveIds} />}
+          <AlsoLove value={alsoLove} className="also-narrow" />
         </div>
       </div>
     );

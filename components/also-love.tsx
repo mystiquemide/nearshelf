@@ -8,12 +8,15 @@ const SECTIONS: { key: keyof AlsoLoveData; label: string }[] = [
   { key: "shows", label: "TV shows" },
 ];
 
-// Where to find these readers outside bookstores, for ads and newsletter swaps.
-export function AlsoLove({ compIds }: { compIds: string[] }) {
+export type AlsoLoveState = { state: "loading" | "done" | "error"; data: AlsoLoveData | null };
+
+// Fetched once per run; the result can be shown in more than one place.
+export function useAlsoLove(compIds: string[], enabled: boolean): AlsoLoveState | null {
   const [data, setData] = useState<AlsoLoveData | null>(null);
   const [state, setState] = useState<"loading" | "done" | "error">("loading");
 
   useEffect(() => {
+    if (!enabled || compIds.length === 0) return;
     let live = true;
     setState("loading");
     fetch("/api/also-love", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ compIds }) })
@@ -26,14 +29,22 @@ export function AlsoLove({ compIds }: { compIds: string[] }) {
     return () => {
       live = false;
     };
-  }, [compIds]);
+  }, [compIds, enabled]);
+
+  return enabled && compIds.length > 0 ? { state, data } : null;
+}
+
+// Where to find these readers outside bookstores, for ads and newsletter swaps.
+export function AlsoLove({ value, className }: { value: AlsoLoveState | null; className?: string }) {
+  if (!value) return null;
+  const { state, data } = value;
 
   // Qloo has no cross-domain signal for some books. Hide the section rather than show empty boxes.
   if (state === "error" || (state === "done" && data && SECTIONS.every(({ key }) => !data[key]?.length))) return null;
 
   return (
-    <section className="tool-section" aria-labelledby="also-h" aria-busy={state === "loading"}>
-      <h2 id="also-h">Readers of these comps also love</h2>
+    <section className={`tool-section ${className ?? ""}`} aria-label="Readers of these comps also love" aria-busy={state === "loading"}>
+      <h2>Readers of these comps also love</h2>
       <p className="muted small">From Qloo, based on your books and your top comps. Useful for ad targeting and newsletter swaps.</p>
       {state === "loading" && <p className="muted">Asking Qloo</p>}
       {state === "done" && data && (

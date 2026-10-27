@@ -397,3 +397,6 @@ textarea { resize: vertical; }
 }
 .skip-link { position: absolute; left: 16px; top: -48px; z-index: 100; padding: 10px 16px; border-radius: 8px; background: var(--paper); color: var(--ink); font: 600 14px/1 var(--sans); text-decoration: none; }
 .skip-link:focus { top: 12px; }
+/* Readers also love: under the comparison on wide screens, after the shelf on narrow ones */
+.also-wide { display: none; }
+@media (min-width: 900px) { .also-wide { display: block; } .also-narrow { display: none; } }
