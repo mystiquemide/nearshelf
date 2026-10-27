@@ -2,7 +2,7 @@
 
 Comp titles for novelists that are recent, mid-list and real, picked from Qloo reader data and checked against rules in code.
 
-**Live app:** https://nearshelf.vercel.app
+**Live app:** https://nearshelf.midelabs.xyz
 
 ## The problem
 
