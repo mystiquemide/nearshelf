@@ -6,7 +6,6 @@ import { WINDOW_DEFAULT, WINDOW_MAX, WINDOW_MIN } from "@/lib/rules/engine";
 import { compSentence, parseShareQuery, shareQuery } from "@/lib/share";
 import { Copy, Link2, ListChecks, Scale, Search } from "lucide-react";
 import { AgentLog } from "./agent-log";
-import { HeroArt } from "./hero-art";
 import { AlsoLove } from "./also-love";
 import { Baseline } from "./baseline";
 import { RulesPanel } from "./rules-panel";
@@ -40,12 +39,10 @@ export function Nearshelf({
   popularityMax,
   alsoLoveEnabled = false,
   qlooReady = false,
-  children,
 }: {
   popularityMax: number | null;
   alsoLoveEnabled?: boolean;
   qlooReady?: boolean;
-  children?: React.ReactNode;
 }) {
   const [seeds, setSeeds] = useState<[string, string, string]>(["", "", ""]);
   const [windowYears, setWindowYears] = useState(WINDOW_DEFAULT);
@@ -63,7 +60,6 @@ export function Nearshelf({
   const runId = useRef(0);
   const lastInput = useRef<{ seeds: string[]; windowYears: number } | null>(null);
   const [tab, setTab] = useState<Tab>("find");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [sharedSeeds, setSharedSeeds] = useState<string[] | null>(null);
 
   const filled = seeds.map((s) => s.trim()).filter(Boolean);
@@ -140,7 +136,6 @@ export function Nearshelf({
     const onHash = () => {
       if (window.location.hash !== "#check") return;
       setTab("check");
-      setMenuOpen(false);
       document.getElementById("tool")?.scrollIntoView({ block: "start" });
     };
     // A second click on a "#check" link doesn't change the hash, so clicks are handled too.
@@ -156,12 +151,6 @@ export function Nearshelf({
     };
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
 
   function applyPreset(p: (typeof PRESETS)[number]) {
     setSeeds(p.seeds);
@@ -195,64 +184,16 @@ export function Nearshelf({
 
   const startSearch = () => {
     setTab("find");
-    setMenuOpen(false);
-    document.getElementById("tool")?.scrollIntoView({ block: "start" });
     window.setTimeout(() => document.getElementById("seed-0")?.focus({ preventScroll: true }), 50);
   };
 
   return (
-    <>
-      <header className="nav on-ink">
-        <div className="container nav-inner">
-          <a className="brand" href="/">
-            <SpineMark />
-            Nearshelf
-          </a>
-          <nav className="nav-links" aria-label="Main">
-            <a href="#how">How it works</a>
-            <a href="#check">Check comps</a>
-            <a href="#llm">Why not an LLM</a>
-          </nav>
-          <button type="button" className="btn btn-primary nav-cta" onClick={startSearch}>Find my comps</button>
-          <button
-            type="button"
-            className="menu-btn"
-            aria-expanded={menuOpen}
-            aria-controls="menu-sheet"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            <MenuIcon open={menuOpen} />
-          </button>
+    <section className="tool-page" aria-labelledby="tool-h">
+      <div className="container">
+        <div className="tool-head">
+          <h1 id="tool-h">{sharedSeeds ? `Comps for books like ${sharedSeeds.join(", ")}` : "Find comps for your book"}</h1>
+          <p>Add up to three books yours reads like. Every comp is checked against the rules and shown with its evidence.</p>
         </div>
-        {menuOpen && (
-          <nav id="menu-sheet" className="container menu-sheet" aria-label="Main">
-            <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
-            <a href="#check" onClick={() => setMenuOpen(false)}>Check comps</a>
-            <a href="#llm" onClick={() => setMenuOpen(false)}>Why not an LLM</a>
-          </nav>
-        )}
-      </header>
-
-      <main>
-      <section className="hero on-ink" aria-labelledby="hero-h">
-          <HeroArt />
-          <div className="container hero-inner">
-            <div className="hero-copy">
-              <h1 id="hero-h">
-                {sharedSeeds ? `Comps for books like ${sharedSeeds.join(", ")}` : "Comp titles your query letter can stand on"}
-              </h1>
-              <p className="hero-sub">
-                Recent, mid-list books that readers of your book actually read. Picked from Qloo reader data, checked against the
-                rules agents use, and shown with the evidence.
-              </p>
-              <div className="row hero-actions">
-                <button type="button" className="btn btn-primary" onClick={startSearch}>Find my comps</button>
-                <a className="btn btn-secondary" href="#how">See how it works</a>
-              </div>
-              <p className="hero-source">Reader data from Qloo&apos;s taste graph</p>
-            </div>
-
             <div className="frame" id="tool">
               <div className="frame-bar">
                 <span className="frame-title">Nearshelf</span>
@@ -297,11 +238,8 @@ export function Nearshelf({
               </div>
               </div>
             </div>
-          </div>
-        </section>
-        {children}
-      </main>
-    </>
+      </div>
+    </section>
   );
 
   function findPanel() {
@@ -451,22 +389,3 @@ const FRAME_NOTE: Record<Tab, string> = {
 };
 
 type Tab = "find" | "check" | "llm";
-
-function SpineMark() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
-      <rect x="6" y="7" width="5" height="18" rx="1" fill="#f4f4f5" />
-      <rect x="12.5" y="9" width="5" height="16" rx="1" fill="#a1a1aa" />
-      <rect x="19" y="6" width="5" height="19" rx="1" fill="#f4f4f5" />
-      <rect x="4" y="25" width="24" height="3" rx="1" fill="#a1a1aa" />
-    </svg>
-  );
-}
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-    </svg>
-  );
-}

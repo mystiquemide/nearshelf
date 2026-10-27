@@ -13,6 +13,8 @@ import {
   XCircle,
 } from "lucide-react";
 import type { EvalTotals } from "@/lib/eval-results";
+import { PRODUCT_IMAGES, type ProductImage } from "@/lib/product-images";
+import { ProductShot } from "./product-shot";
 
 // Everything below the hero. Copy only states what the app does today.
 // Eval numbers render only when eval/results.json exists from a real run.
@@ -23,13 +25,13 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
         <div className="container">
           <SectionHead id="how-h" icon={ListChecks} title="How Nearshelf picks a comp" sub="Three steps, each shown on screen as it happens." />
           <ol className="steps-3">
-            <Step n={1} icon={BookOpen} title="Tell us three books yours reads like">
+            <Step n={1} icon={BookOpen} image={PRODUCT_IMAGES.seeds} title="Tell us three books yours reads like">
               Type titles or pick a preset. Each one is looked up in Qloo, and you see straight away whether it was found.
             </Step>
-            <Step n={2} icon={Users} title="Qloo finds the readers">
+            <Step n={2} icon={Users} image={PRODUCT_IMAGES.agent} title="Qloo finds the readers">
               Nearshelf asks Qloo&apos;s taste graph which books the readers of your seeds also love, filtered to recent titles.
             </Step>
-            <Step n={3} icon={ShieldCheck} title="Every book is checked against the rules">
+            <Step n={3} icon={ShieldCheck} image={PRODUCT_IMAGES.rejected} title="Every book is checked against the rules">
               Recency, size, and whether it&apos;s one of your own books. Every verdict is made in code, not by a model.
             </Step>
           </ol>
@@ -40,19 +42,19 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
         <div className="container">
           <SectionHead id="get-h" icon={BadgeCheck} title="What you leave with" sub="Everything you need for the comps line in your query letter." />
           <div className="bento">
-            <Tile wide icon={BookOpen} title="Comps you can defend.">
+            <Tile wide icon={ClipboardCheck} image={PRODUCT_IMAGES.check} title="Check the comps you already have." href="/find#check" cta="Check my comps">
+              Paste up to five titles and see which pass, which don&apos;t, and a replacement for the ones that fail.
+            </Tile>
+            <Tile icon={BookOpen} title="Comps you can defend.">
               Recent, mid-list books with readers like yours, up to six on the shelf, in the order Qloo ranks them.
             </Tile>
-            <Tile icon={Fingerprint} title="Proof for every book.">
+            <Tile icon={Fingerprint} image={PRODUCT_IMAGES.evidence} title="Proof for every book.">
               Its Qloo entity ID, publication year, popularity score and the seed books it came from.
             </Tile>
             <Tile icon={XCircle} title="Know why a book didn't make it.">
               Rejected books stay visible with the rule they broke and the value that failed it.
             </Tile>
-            <Tile icon={ClipboardCheck} title="Check the comps you already have." href="#check" cta="Check my comps">
-              Paste up to five titles and see which pass, which don&apos;t, and a replacement for the ones that fail.
-            </Tile>
-            <Tile icon={Copy} title="A line ready for your query.">
+            <Tile icon={Copy} image={PRODUCT_IMAGES.line} title="A line ready for your query.">
               &quot;My novel will appeal to readers of A and B&quot;, built only from comps that passed. Copy it in one click.
             </Tile>
           </div>
@@ -97,9 +99,10 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
                 <li><ShieldCheck size={16} aria-hidden="true" /> Return one of your seed books as a comp</li>
                 <li><ShieldCheck size={16} aria-hidden="true" /> Let the model pick, add or rename a book</li>
               </ul>
-              <a className="btn btn-primary" href="#tool">Try the comparison</a>
+              <a className="btn btn-primary" href="/find">Try the comparison</a>
             </div>
           </div>
+          {PRODUCT_IMAGES.llm && <ProductShot image={PRODUCT_IMAGES.llm} className="llm-shot" />}
           {evalTotals && <EvalStrip t={evalTotals} />}
         </div>
       </section>
@@ -117,8 +120,8 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
           <h2 id="final-h">Find comps for your book in a minute</h2>
           <p>Three titles in, recent mid-list comps out, with the proof.</p>
           <div className="row final-actions">
-            <a className="btn btn-primary" href="#tool">Find my comps</a>
-            <a className="btn btn-secondary" href="#check">Check my comps</a>
+            <a className="btn btn-primary" href="/find">Find my comps</a>
+            <a className="btn btn-secondary" href="/find#check">Check my comps</a>
           </div>
         </div>
       </section>
@@ -136,7 +139,7 @@ export function Footer() {
               <p className="footer-brand">Nearshelf</p>
               <p className="footer-tag">Comp titles backed by reader data.</p>
             </div>
-            <FooterCol title="Product" links={[["How it works", "#how"], ["Check my comps", "#check"], ["Why not an LLM", "#llm"]]} />
+            <FooterCol title="Product" links={[["Find comps", "/find"], ["Check my comps", "/find#check"], ["How it works", "/#how"], ["Why not an LLM", "/#llm"]]} />
             <FooterCol
               title="Built with"
               links={[["Qloo taste graph", "https://www.qloo.com"], ["Vercel AI SDK", "https://ai-sdk.dev"], ["NVIDIA models", "https://build.nvidia.com"]]}
@@ -166,23 +169,26 @@ function SectionHead({ id, icon: I, title, sub }: { id: string; icon: Icon; titl
   );
 }
 
-function Step({ n, icon: I, title, children }: { n: number; icon: Icon; title: string; children: React.ReactNode }) {
+function Step({ n, icon: I, title, children, image }: { n: number; icon: Icon; title: string; children: React.ReactNode; image?: ProductImage }) {
   return (
     <li className="step-card">
-      <div className="step-top">
-        <span className="step-num">{n}</span>
-        <I size={20} strokeWidth={1.5} aria-hidden="true" />
+      <div className="step-text">
+        <div className="step-top">
+          <span className="step-num">{n}</span>
+          <I size={20} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <h3>{title}</h3>
+        <p>{children}</p>
       </div>
-      <h3>{title}</h3>
-      <p>{children}</p>
+      {image && <ProductShot image={image} className="step-shot" />}
     </li>
   );
 }
 
-function Tile({ icon: I, title, children, wide, href, cta }: { icon: Icon; title: string; children: React.ReactNode; wide?: boolean; href?: string; cta?: string }) {
+function Tile({ icon: I, title, children, wide, href, cta, image }: { icon: Icon; title: string; children: React.ReactNode; wide?: boolean; href?: string; cta?: string; image?: ProductImage }) {
   return (
     <div className={`tile${wide ? " tile-wide" : ""}`}>
-      <span className="icon-tile" aria-hidden="true"><I size={20} strokeWidth={1.5} /></span>
+      {image ? <ProductShot image={image} className="tile-shot" /> : <span className="icon-tile" aria-hidden="true"><I size={20} strokeWidth={1.5} /></span>}
       <p><strong>{title}</strong> {children}</p>
       {href && cta && <a className="btn btn-secondary tile-cta" href={href}>{cta}</a>}
     </div>

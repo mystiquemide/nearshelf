@@ -1,38 +1,48 @@
 import type { Metadata } from "next";
-import { Nearshelf } from "@/components/nearshelf";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { HeroArt } from "@/components/hero-art";
+import { ProductShot } from "@/components/product-shot";
 import { Footer, Sections } from "@/components/sections";
+import { SiteNav } from "@/components/site-nav";
 import { loadEvalTotals } from "@/lib/eval-results";
-import { popularityCeiling } from "@/lib/run/config";
-import { alsoLoveEnabled } from "@/lib/run/also-love";
-import { parseShareQuery, shareQuery } from "@/lib/share";
+import { PRODUCT_IMAGES } from "@/lib/product-images";
+import { toParams, type SearchParams } from "@/lib/search-params";
 
-type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+export const metadata: Metadata = {
+  openGraph: { images: ["/api/og"] },
+  twitter: { card: "summary_large_image", images: ["/api/og"] },
+};
 
-function toParams(sp: Record<string, string | string[] | undefined>) {
-  const params = new URLSearchParams();
-  for (const [k, v] of Object.entries(sp)) for (const item of Array.isArray(v) ? v : v ? [v] : []) params.append(k, item);
-  return params;
-}
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
+  // Share links used to live on the home page. Send them to the tool.
+  const params = toParams(await searchParams);
+  if (params.has("s")) redirect(`/find?${params}`);
 
-// A share link previews with its seed titles. Comps aren't in the preview, since that would need a Qloo call.
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const input = parseShareQuery(toParams(await searchParams));
-  if (!input) return { openGraph: { images: ["/api/og"] }, twitter: { card: "summary_large_image", images: ["/api/og"] } };
-  const title = `Comps for books like ${input.seeds.join(", ")}`;
-  const image = `/api/og?${shareQuery(input)}`;
-  return {
-    title: `${title} · Nearshelf`,
-    openGraph: { title, description: "Recent, mid-list comps checked against Qloo reader data.", images: [image] },
-    twitter: { card: "summary_large_image", title, images: [image] },
-  };
-}
-
-export default function Home() {
   return (
     <>
-      <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)}>
+      <SiteNav />
+      <main>
+        <section className="hero on-ink" aria-labelledby="hero-h">
+          <HeroArt />
+          <div className="container hero-inner">
+            <div className="hero-copy">
+              <h1 id="hero-h">Comp titles your query letter can stand on</h1>
+              <p className="hero-sub">
+                Recent, mid-list books that readers of your book actually read. Picked from Qloo reader data, checked against the
+                rules agents use, and shown with the evidence.
+              </p>
+              <div className="row hero-actions">
+                <Link className="btn btn-primary" href="/find">Find my comps</Link>
+                <Link className="btn btn-secondary" href="/#how">See how it works</Link>
+              </div>
+              <p className="hero-source">Reader data from Qloo&apos;s taste graph</p>
+            </div>
+            {PRODUCT_IMAGES.hero && <ProductShot image={PRODUCT_IMAGES.hero} className="hero-shot" priority />}
+          </div>
+        </section>
         <Sections evalTotals={loadEvalTotals()} />
-      </Nearshelf>
+      </main>
       <Footer />
     </>
   );
