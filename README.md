@@ -2,7 +2,7 @@
 
 Comp titles for novelists that are recent, mid-list and real, picked from Qloo reader data and checked against rules in code.
 
-**Live app:** https://nearshelf.midelabs.xyz
+**Live app:** https://nearshelf.midelabs.xyz (the tool is at [/find](https://nearshelf.midelabs.xyz/find))
 
 ## The problem
 
@@ -91,7 +91,7 @@ Tests use synthetic data and scripted models. They cover the rules, the agent's 
 ## Project layout
 
 ```text
-app/              page and API routes (/api/run, /api/check, /api/baseline)
+app/              landing page, /find tool page, API routes (/api/run, /api/check, /api/baseline, /api/og)
 components/       shelf, evidence, agent log, checker, comparison panel
 lib/agent/        tool-calling agent
 lib/qloo/         Qloo client, response parsing, cache
