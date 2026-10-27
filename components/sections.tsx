@@ -45,14 +45,16 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
             <Tile wide icon={ClipboardCheck} image={PRODUCT_IMAGES.check} title="Check the comps you already have." href="/find#check" cta="Check my comps">
               Paste up to five titles and see which pass, which don&apos;t, and a replacement for the ones that fail.
             </Tile>
-            <Tile icon={BookOpen} title="Comps you can defend.">
-              Recent, mid-list books with readers like yours, up to six on the shelf, in the order Qloo ranks them.
-            </Tile>
+            <div className="tile-stack">
+              <Tile icon={BookOpen} title="Comps you can defend.">
+                Recent, mid-list books with readers like yours, up to six on the shelf, in the order Qloo ranks them.
+              </Tile>
+              <Tile icon={XCircle} title="Know why a book didn't make it.">
+                Rejected books stay visible with the rule they broke and the value that failed it.
+              </Tile>
+            </div>
             <Tile icon={Fingerprint} image={PRODUCT_IMAGES.evidence} title="Proof for every book.">
               Its Qloo entity ID, publication year, popularity score and the seed books it came from.
-            </Tile>
-            <Tile icon={XCircle} title="Know why a book didn't make it.">
-              Rejected books stay visible with the rule they broke and the value that failed it.
             </Tile>
             <Tile icon={Copy} image={PRODUCT_IMAGES.line} title="A line ready for your query.">
               &quot;My novel will appeal to readers of A and B&quot;, built only from comps that passed. Copy it in one click.
@@ -67,7 +69,7 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
             id="llm-h"
             icon={Scale}
             title="Why not just ask ChatGPT?"
-            sub="Ask a plain LLM for comps and check its answers. That's what the comparison tab does, live, with the same rules."
+            sub="Ask a plain LLM for comps and check its answers against the same rules. Nearshelf does this live on every search."
           />
           <div className="llm-grid">
             <div className="llm-col">
@@ -102,7 +104,7 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
               <a className="btn btn-primary" href="/find">Try the comparison</a>
             </div>
           </div>
-          {PRODUCT_IMAGES.llm && <ProductShot image={PRODUCT_IMAGES.llm} className="llm-shot" />}
+          {PRODUCT_IMAGES.llm && <ProductShot image={PRODUCT_IMAGES.llm} className="llm-shot" ratio={16 / 10} />}
           {evalTotals && <EvalStrip t={evalTotals} />}
         </div>
       </section>

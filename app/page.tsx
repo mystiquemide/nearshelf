@@ -22,7 +22,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   return (
     <>
       <SiteNav />
-      <main>
+      <main id="main">
         <section className="hero on-ink" aria-labelledby="hero-h">
           <HeroArt />
           <div className="container hero-inner">
@@ -38,7 +38,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               </div>
               <p className="hero-source">Reader data from Qloo&apos;s taste graph</p>
             </div>
-            {PRODUCT_IMAGES.hero && <ProductShot image={PRODUCT_IMAGES.hero} className="hero-shot" priority />}
+            {PRODUCT_IMAGES.hero && <ProductShot image={PRODUCT_IMAGES.hero} className="hero-shot" ratio={16 / 9} priority />}
           </div>
         </section>
         <Sections evalTotals={loadEvalTotals()} />

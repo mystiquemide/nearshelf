@@ -24,7 +24,8 @@ Nearshelf gives the author comps that are actually read by the same readers as t
 4. **Accepted comps go on the shelf.** Click a spine to see its evidence: Qloo entity ID, publication year, popularity score and the seeds used. Rejected candidates are listed with the rule they broke and the value that failed it.
 5. **Copy your comp line** ("My novel will appeal to readers of A and B") or share a link that reruns the same search.
 6. **Check my comps:** paste the comps you already have and see which pass and which don't, and why.
-7. **What a plain LLM said:** the same seeds go to an LLM with no Qloo access, and its titles are run through the same checks on the same screen.
+7. **What a plain LLM said:** the same seeds go to an LLM with no Qloo access, and its titles are run through the same checks on the same screen. The score sits next to the shelf after every search.
+8. **Readers also love:** podcasts and TV shows the same readers like, for ad targeting and newsletter swaps.
 
 ## How Qloo is used
 
@@ -33,6 +34,7 @@ Nearshelf gives the author comps that are actually read by the same readers as t
 | Resolve seeds | `GET /search` with `types=urn:entity:book` | The book's Qloo entity, author, year and popularity |
 | Find candidates | `GET /v2/insights` with `filter.type=urn:entity:book`, `signal.interests.entities`, `filter.publication_year.min`, `filter.popularity.max`, `feature.explainability=true`, `take=30` | Books the seeds' readers love, already narrowed by year and size |
 | Check pasted and LLM titles | `GET /search` | Whether a title exists and what Qloo knows about it |
+| Readers also love | `GET /v2/insights` with `filter.type=urn:entity:podcast` or `urn:entity:tv_show`, signalled by the seeds and top comps | Where these readers spend time outside books |
 
 Qloo is the only source of candidates and popularity in the app. Remove it and there are no comps, no size rule and no evidence to show.
 

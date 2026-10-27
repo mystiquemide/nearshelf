@@ -24,7 +24,7 @@ export default function FindPage() {
   return (
     <>
       <SiteNav />
-      <main>
+      <main id="main">
         <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)} />
       </main>
       <Footer />
