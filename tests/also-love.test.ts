@@ -3,12 +3,12 @@ import { alsoLove, parseCompIds } from "@/lib/run/also-love";
 import { createQlooClient, QlooError, type Fetcher, type QlooClient } from "@/lib/qloo/client";
 
 describe("parseCompIds", () => {
-  it("accepts one to three plain IDs and dedupes", () => {
+  it("accepts one to six plain IDs and dedupes", () => {
     expect(parseCompIds(["A1", "B-2", "A1"])).toEqual(["A1", "B-2"]);
   });
 
   it("rejects anything else", () => {
-    for (const bad of [null, [], ["a", "b", "c", "d"], [""], [42], ["<script>"], ["x".repeat(101)], "A1"]) expect(parseCompIds(bad)).toBeNull();
+    for (const bad of [null, [], ["a", "b", "c", "d", "e", "f", "g"], [""], [42], ["<script>"], ["x".repeat(101)], "A1"]) expect(parseCompIds(bad)).toBeNull();
   });
 });
 
@@ -20,8 +20,8 @@ describe("alsoLove", () => {
     });
     const qloo = { searchBooks: vi.fn(), bookInsights: vi.fn(), crossDomainInsights } satisfies QlooClient;
     const out = await alsoLove(qloo, ["C1", "C2"]);
-    expect(out).toEqual({ podcasts: [{ id: "urn:entity:podcast", name: "Top urn:entity:podcast" }], shows: null, artists: [{ id: "urn:entity:artist", name: "Top urn:entity:artist" }] });
-    expect(crossDomainInsights.mock.calls.map((c) => c.slice(1))).toEqual([[["C1", "C2"], 5], [["C1", "C2"], 5], [["C1", "C2"], 5]]);
+    expect(out).toEqual({ podcasts: [{ id: "urn:entity:podcast", name: "Top urn:entity:podcast" }], shows: null });
+    expect(crossDomainInsights.mock.calls.map((c) => c.slice(1))).toEqual([[["C1", "C2"], 5], [["C1", "C2"], 5]]);
   });
 });
 

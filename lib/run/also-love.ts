@@ -1,18 +1,19 @@
 import { QlooError, type CrossDomainType, type NamedEntity, type QlooClient } from "@/lib/qloo/client";
 
-export const ALSO_LOVE_TYPES: { key: "podcasts" | "shows" | "artists"; type: CrossDomainType }[] = [
+// Music was dropped after testing: Qloo artist results were off-genre for several seed sets.
+export const ALSO_LOVE_TYPES: { key: "podcasts" | "shows"; type: CrossDomainType }[] = [
   { key: "podcasts", type: "urn:entity:podcast" },
   { key: "shows", type: "urn:entity:tv_show" },
-  { key: "artists", type: "urn:entity:artist" },
 ];
 
 export type AlsoLove = Record<(typeof ALSO_LOVE_TYPES)[number]["key"], NamedEntity[] | null>;
 
 const ID_PATTERN = /^[A-Za-z0-9_.:-]{1,100}$/;
 
-// Accepts at most three comp IDs from the client. They only become Qloo signals, never displayed text.
+// Accepts up to six IDs (resolved seeds plus top comps) from the client.
+// Qloo rejects some book IDs as cross-domain signals, so pooling both keeps at least one valid. They only become Qloo signals, never displayed text.
 export function parseCompIds(raw: unknown): string[] | null {
-  if (!Array.isArray(raw) || raw.length === 0 || raw.length > 3) return null;
+  if (!Array.isArray(raw) || raw.length === 0 || raw.length > 6) return null;
   return raw.every((id) => typeof id === "string" && ID_PATTERN.test(id)) ? [...new Set(raw as string[])] : null;
 }
 

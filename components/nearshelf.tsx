@@ -179,7 +179,10 @@ export function Nearshelf({
     setWindowYears(WINDOW_MAX);
     void run({ ...lastInput.current, windowYears: WINDOW_MAX });
   };
-  const alsoLoveIds = useMemo(() => (result ? result.accepted.slice(0, 3).map((v) => v.book.id) : []), [result]);
+  const alsoLoveIds = useMemo(
+    () => (result ? [...new Set([...Object.values(seedResults).flatMap((s) => (s.book ? [s.book.id] : [])), ...result.accepted.slice(0, 3).map((v) => v.book.id)])] : []),
+    [result, seedResults],
+  );
   const canWiden = (lastInput.current?.windowYears ?? WINDOW_MAX) < WINDOW_MAX;
 
   const startSearch = () => {
@@ -329,6 +332,7 @@ export function Nearshelf({
               )}
             </section>
           )}
+          {result && <VersusLlm accepted={result.accepted.length} baseline={baseline} loading={baselineLoading} onOpen={() => setTab("llm")} />}
         </div>
 
         <div>
@@ -364,12 +368,6 @@ export function Nearshelf({
             </section>
           )}
           {alsoLoveEnabled && alsoLoveIds.length > 0 && <AlsoLove compIds={alsoLoveIds} />}
-          {result && (
-            <p className="small muted" style={{ marginTop: 20 }}>
-              See what a plain LLM said for the same books in the{" "}
-              <button type="button" className="link-btn" onClick={() => setTab("llm")}>Compare with an LLM</button> tab.
-            </p>
-          )}
         </div>
       </div>
     );
@@ -389,3 +387,34 @@ const FRAME_NOTE: Record<Tab, string> = {
 };
 
 type Tab = "find" | "check" | "llm";
+
+// Same seeds, same rules: the shelf's count next to the plain LLM's, without leaving the find panel.
+function VersusLlm({ accepted, baseline, loading, onOpen }: { accepted: number; baseline: BaselineResponse | null; loading: boolean; onOpen: () => void }) {
+  const llm =
+    loading || !baseline
+      ? "Asking a plain LLM the same question"
+      : baseline.state === "CHECKED"
+        ? `${baseline.results.filter((r) => r.status === "ACCEPTED").length} of ${baseline.results.length} passed the same rules`
+        : baseline.state === "UNCHECKED"
+          ? "Answered, but its titles couldn't be checked right now"
+          : "Not available right now";
+  return (
+    <section className="tool-section versus" aria-labelledby="versus-h" aria-busy={loading}>
+      <h2 id="versus-h">Nearshelf vs a plain LLM</h2>
+      <div className="versus-grid">
+        <div className="versus-col">
+          <p className="label">Nearshelf</p>
+          <p className="versus-num">{accepted} of {accepted} passed</p>
+          <p className="small muted">Every comp on the shelf came from Qloo and passed every rule.</p>
+        </div>
+        <div className="versus-col">
+          <p className="label">Plain LLM, same seeds</p>
+          <p className="versus-num">{llm}</p>
+          <button type="button" className="link-btn small" onClick={onOpen} disabled={loading || !baseline || baseline.state === "UNAVAILABLE"}>
+            See each title and why it failed
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -6,7 +6,6 @@ import type { AlsoLove as AlsoLoveData } from "@/lib/run/also-love";
 const SECTIONS: { key: keyof AlsoLoveData; label: string }[] = [
   { key: "podcasts", label: "Podcasts" },
   { key: "shows", label: "TV shows" },
-  { key: "artists", label: "Music" },
 ];
 
 // Where to find these readers outside bookstores, for ads and newsletter swaps.
@@ -32,7 +31,7 @@ export function AlsoLove({ compIds }: { compIds: string[] }) {
   return (
     <section className="tool-section" aria-labelledby="also-h" aria-busy={state === "loading"}>
       <h2 id="also-h">Readers of these comps also love</h2>
-      <p className="muted small">From Qloo, based on your top comps. Useful for ad targeting and newsletter swaps.</p>
+      <p className="muted small">From Qloo, based on your books and your top comps. Useful for ad targeting and newsletter swaps.</p>
       {state === "loading" && <p className="muted">Asking Qloo</p>}
       {state === "error" && <p className="muted">This isn't available right now.</p>}
       {state === "done" && data && (
