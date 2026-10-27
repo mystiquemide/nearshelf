@@ -1,5 +1,5 @@
 // In-memory sliding window per instance. Serverless instances don't share it,
-// so this caps abuse per warm instance, not globally (see DEC-003).
+// so this caps abuse per warm instance, not globally.
 export function createRateLimiter(limit: number, windowMs: number, now: () => number = Date.now) {
   const hits = new Map<string, number[]>();
   return {
@@ -18,7 +18,7 @@ export function createRateLimiter(limit: number, windowMs: number, now: () => nu
   };
 }
 
-// One budget shared by every route that spends Qloo or LLM quota: 20 runs per 10 minutes per IP (NFR-003).
+// One budget shared by every route that spends Qloo or LLM quota: 20 runs per 10 minutes per IP.
 export const sharedLimiter = createRateLimiter(20, 10 * 60 * 1000);
 
 export function clientIp(req: Request): string {

@@ -16,7 +16,7 @@ export interface RuleFailure {
 export interface RuleConfig {
   currentYear: number;
   windowYears: number;
-  // null drops the size rule, the Phase 0 fallback when popularity can't separate megahits.
+  // null drops the size rule.
   popularityMax: number | null;
 }
 

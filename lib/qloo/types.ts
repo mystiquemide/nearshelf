@@ -6,7 +6,7 @@ export interface Book {
   popularity: number | null;
 }
 
-// Field paths confirmed by the Phase 0 probe: books carry properties.publication_year,
+// Field paths confirmed against live Qloo responses: books carry properties.publication_year,
 // and the author arrives in disambiguation as "2021, Tasha Suri".
 const YEAR_PATHS = ["publication_year", "publication_date", "release_year", "year"] as const;
 

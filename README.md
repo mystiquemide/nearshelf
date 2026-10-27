@@ -2,7 +2,11 @@
 
 Comp titles for novelists that are recent, mid-list and real, picked from Qloo reader data and checked against rules in code.
 
-**Live app:** https://nearshelf.midelabs.xyz (the tool is at [/find](https://nearshelf.midelabs.xyz/find))
+No comp without a Qloo ID. The agent picks which tools to call, never which books to recommend, and a plain LLM's suggestions are checked against the same rules on the same screen.
+
+**Try it:** https://nearshelf.midelabs.xyz/find. Click a preset, no sign-up.
+
+![Nearshelf shelf with evidence panel for an accepted comp](https://9snawvkvwjgduwxr.public.blob.vercel-storage.com/product/hero-v2.webp)
 
 ## The problem
 
@@ -93,7 +97,7 @@ Tests use synthetic data and scripted models. They cover the rules, the agent's 
 ## Project layout
 
 ```text
-app/              landing page, /find tool page, API routes (/api/run, /api/check, /api/baseline, /api/og)
+app/              landing page, /find tool page, API routes (/api/run, /api/check, /api/baseline, /api/also-love, /api/og)
 components/       shelf, evidence, agent log, checker, comparison panel
 lib/agent/        tool-calling agent
 lib/qloo/         Qloo client, response parsing, cache
