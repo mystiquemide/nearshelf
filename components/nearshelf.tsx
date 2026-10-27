@@ -40,10 +40,12 @@ export function Nearshelf({
   popularityMax,
   alsoLoveEnabled = false,
   qlooReady = false,
+  children,
 }: {
   popularityMax: number | null;
   alsoLoveEnabled?: boolean;
   qlooReady?: boolean;
+  children?: React.ReactNode;
 }) {
   const [seeds, setSeeds] = useState<[string, string, string]>(["", "", ""]);
   const [windowYears, setWindowYears] = useState(WINDOW_DEFAULT);
@@ -133,6 +135,19 @@ export function Nearshelf({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // "#check" links anywhere on the page open the checker tab inside the tool.
+  useEffect(() => {
+    const onHash = () => {
+      if (window.location.hash !== "#check") return;
+      setTab("check");
+      setMenuOpen(false);
+      document.getElementById("tool")?.scrollIntoView({ block: "start" });
+    };
+    onHash();
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
@@ -187,7 +202,7 @@ export function Nearshelf({
           </a>
           <nav className="nav-links" aria-label="Main">
             <a href="#how">How it works</a>
-            <a href="#tool" onClick={() => setTab("check")}>Check comps</a>
+            <a href="#check">Check comps</a>
             <a href="#llm">Why not an LLM</a>
           </nav>
           <button type="button" className="btn btn-primary nav-cta" onClick={startSearch}>Find my comps</button>
@@ -205,14 +220,14 @@ export function Nearshelf({
         {menuOpen && (
           <nav id="menu-sheet" className="container menu-sheet" aria-label="Main">
             <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
-            <a href="#tool" onClick={() => { setTab("check"); setMenuOpen(false); }}>Check comps</a>
+            <a href="#check" onClick={() => setMenuOpen(false)}>Check comps</a>
             <a href="#llm" onClick={() => setMenuOpen(false)}>Why not an LLM</a>
           </nav>
         )}
       </header>
 
       <main>
-        <section className="hero on-ink" aria-labelledby="hero-h">
+      <section className="hero on-ink" aria-labelledby="hero-h">
           <HeroArt />
           <div className="container hero-inner">
             <div className="hero-copy">
@@ -276,6 +291,7 @@ export function Nearshelf({
             </div>
           </div>
         </section>
+        {children}
       </main>
     </>
   );

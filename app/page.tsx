@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Nearshelf } from "@/components/nearshelf";
+import { Footer, Sections } from "@/components/sections";
+import { loadEvalTotals } from "@/lib/eval-results";
 import { popularityCeiling } from "@/lib/run/config";
 import { alsoLoveEnabled } from "@/lib/run/also-love";
 import { parseShareQuery, shareQuery } from "@/lib/share";
@@ -26,5 +28,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default function Home() {
-  return <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)} />;
+  return (
+    <>
+      <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)}>
+        <Sections evalTotals={loadEvalTotals()} />
+      </Nearshelf>
+      <Footer />
+    </>
+  );
 }
