@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Nearshelf } from "@/components/nearshelf";
-import { Footer } from "@/components/sections";
 import { SiteNav } from "@/components/site-nav";
 import { popularityCeiling } from "@/lib/run/config";
 import { alsoLoveEnabled } from "@/lib/run/also-love";
@@ -27,7 +26,6 @@ export default function FindPage() {
       <main id="main">
         <Nearshelf popularityMax={popularityCeiling()} alsoLoveEnabled={alsoLoveEnabled()} qlooReady={Boolean(process.env.QLOO_API_KEY)} />
       </main>
-      <Footer />
     </>
   );
 }

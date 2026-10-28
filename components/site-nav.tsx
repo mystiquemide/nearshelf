@@ -1,16 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const LINKS: [string, string][] = [
+// Landing links scroll to sections. On the tool, the sidebar already has Check comps
+// and the CTA would point at the page you're on, so both are dropped there.
+const LANDING_LINKS: [string, string][] = [
   ["How it works", "/#how"],
   ["Check comps", "/find#check"],
+  ["Why not an LLM", "/#llm"],
+];
+const TOOL_LINKS: [string, string][] = [
+  ["How it works", "/#how"],
   ["Why not an LLM", "/#llm"],
 ];
 
 export function SiteNav() {
   const [open, setOpen] = useState(false);
+  const onTool = usePathname() === "/find";
+  const links = onTool ? TOOL_LINKS : LANDING_LINKS;
 
   useEffect(() => {
     if (!open) return;
@@ -27,11 +36,11 @@ export function SiteNav() {
           Nearshelf
         </Link>
         <nav className="nav-links" aria-label="Main">
-          {LINKS.map(([label, href]) => (
+          {links.map(([label, href]) => (
             <Link key={href} href={href}>{label}</Link>
           ))}
         </nav>
-        <Link className="btn btn-primary nav-cta" href="/find">Find my comps</Link>
+        {!onTool && <Link className="btn btn-primary nav-cta" href="/find">Find my comps</Link>}
         <button
           type="button"
           className="menu-btn"
@@ -45,7 +54,7 @@ export function SiteNav() {
       </div>
       {open && (
         <nav id="menu-sheet" className="container menu-sheet" aria-label="Main">
-          {LINKS.map(([label, href]) => (
+          {links.map(([label, href]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>
           ))}
         </nav>

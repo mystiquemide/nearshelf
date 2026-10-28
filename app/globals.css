@@ -400,3 +400,6 @@ textarea { resize: vertical; }
 /* Readers also love: under the comparison on wide screens, after the shelf on narrow ones */
 .also-wide { display: none; }
 @media (min-width: 900px) { .also-wide { display: block; } .also-narrow { display: none; } }
+/* With no CTA (tool page), the menu button still sits at the right edge. */
+.menu-btn { margin-left: auto; }
+.nav-cta + .menu-btn { margin-left: 0; }
