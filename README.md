@@ -8,7 +8,7 @@ No comp without a Qloo ID. The agent picks which tools to call, never which book
 
 **Try it:** https://nearshelf.midelabs.xyz/find. Click a preset, no sign-up.
 
-![Nearshelf shelf with evidence panel for an accepted comp](https://9snawvkvwjgduwxr.public.blob.vercel-storage.com/product/hero-v2.webp)
+[![Watch the Nearshelf demo (2:07)](docs/media/demo-thumbnail.jpg)](https://youtu.be/46kker3hpVE)
 
 ## The problem
 
