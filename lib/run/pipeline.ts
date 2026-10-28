@@ -63,7 +63,7 @@ export class RunSession {
     }
     for (const seed of this.seeds) this.emit({ type: "seed", seed });
     if (this.resolvedBooks.length === 0) {
-      this.fail({ type: "error", state: "FAILED", reason: "no_seed_resolved", message: "None of these titles have Qloo reader data, so there's nothing to base comps on.", retryable: false });
+      this.fail({ type: "error", state: "FAILED", reason: "no_seed_resolved", message: "We couldn't find reader data for any of these books. Check the spelling, or try other books yours reads like.", retryable: false });
     }
     return this.seeds;
   }

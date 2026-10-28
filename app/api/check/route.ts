@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as { titles?: unknown; windowYears?: unknown } | null;
   const titles = parseCheckTitles(body?.titles);
   if (!titles) return Response.json({ error: "Send one to five titles, each under 200 characters." }, { status: 400 });
-  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "Too many requests. Try again in a minute." }, { status: 429 });
+  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "You've run a lot of searches in the last 10 minutes. Wait a few minutes, then try again." }, { status: 429 });
 
   const cfg = { currentYear: new Date().getFullYear(), windowYears: clampWindow(body?.windowYears ?? undefined), popularityMax: popularityCeiling() };
   try {

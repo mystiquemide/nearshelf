@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const input = parseRunInput(await req.json().catch(() => null));
   if (!input) return Response.json({ error: "Send one to three titles, each under 200 characters." }, { status: 400 });
-  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "Too many requests. Try again in a minute." }, { status: 429 });
+  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "You've run a lot of searches in the last 10 minutes. Wait a few minutes, then try again." }, { status: 429 });
 
   let llm;
   try {

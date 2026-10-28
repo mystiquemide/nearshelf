@@ -16,7 +16,7 @@ export function VerdictRow({ r, replacement }: { r: CheckResult; replacement?: s
     r.status === "REJECTED"
       ? r.failures.map(describeFailure).join(". ")
       : r.status === "NOT_FOUND"
-        ? "Couldn't find this book in Qloo or Open Library"
+        ? "Couldn't find this book in Qloo or Open Library. Check the spelling, or it may not exist"
         : r.status === "NO_QLOO_DATA"
           ? `Real book${r.external?.year ? ` (${r.external.year})` : ""}, but Qloo has no reader data for it`
           : `${r.book?.year ?? ""}${r.book?.popularity != null ? `, popularity ${r.book.popularity.toFixed(3)}` : ""}`;

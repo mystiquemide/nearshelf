@@ -4,10 +4,10 @@ import { BookOpen, CalendarClock, Gauge, Users } from "lucide-react";
 // The size rule is only listed when it's actually switched on.
 export function RulesPanel({ windowYears, popularityMax }: { windowYears: number; popularityMax: number | null }) {
   const rules = [
-    { icon: Users, text: "Qloo finds books that readers of your seed books also love." },
+    { icon: Users, text: "Qloo finds books that readers of your books also love." },
     { icon: CalendarClock, text: `It was published in the last ${windowYears} years.` },
     ...(popularityMax !== null ? [{ icon: Gauge, text: `It isn't a megahit (popularity under ${popularityMax.toFixed(3)}).` }] : []),
-    { icon: BookOpen, text: "It isn't one of your own seed books." },
+    { icon: BookOpen, text: "It isn't one of the books you entered." },
   ];
   return (
     <aside className="rules" aria-labelledby="rules-h">

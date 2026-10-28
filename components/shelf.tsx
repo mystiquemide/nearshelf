@@ -26,7 +26,7 @@ export function Shelf({ result, seedTitles, onWiden }: { result: RunResult; seed
 
       {result.accepted.length === 0 ? (
         <div className="empty">
-          <p>No comps passed the rules for these seeds. Try a wider window or different seed books.</p>
+          <p>No comps passed the rules for these books. Widen the window, or try different books yours reads like.</p>
           {onWiden && <button type="button" className="btn btn-secondary" onClick={onWiden}>Widen to 5 years</button>}
         </div>
       ) : (

@@ -16,7 +16,7 @@ export function AgentLog({ agent, tools }: { agent: AgentEvent[]; tools: ToolEve
         {first.mode === "agent" ? (
           <><Bot size={16} strokeWidth={1.75} aria-hidden="true" /> Agent <code>{first.model}</code> chose these tool calls</>
         ) : (
-          <><Wrench size={16} strokeWidth={1.75} aria-hidden="true" /> Fixed sequence (no agent model)</>
+          <><Wrench size={16} strokeWidth={1.75} aria-hidden="true" /> Standard steps (the model didn't answer)</>
         )}
       </summary>
       {tools.length > 0 && (

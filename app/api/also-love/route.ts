@@ -10,6 +10,6 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as { compIds?: unknown } | null;
   const compIds = parseCompIds(body?.compIds);
   if (!compIds) return Response.json({ error: "Send one to six book IDs." }, { status: 400 });
-  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "Too many searches from your connection in the last 10 minutes." }, { status: 429 });
+  if (!sharedLimiter.take(clientIp(req))) return Response.json({ error: "You've run a lot of searches in the last 10 minutes. Wait a few minutes, then try again." }, { status: 429 });
   return Response.json(await alsoLove(createQlooClient(), compIds), { headers: { "cache-control": "no-store" } });
 }

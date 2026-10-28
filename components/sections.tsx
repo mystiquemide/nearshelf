@@ -29,7 +29,7 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
               Type titles or pick a preset. Each one is looked up in Qloo, and you see straight away whether it was found.
             </Step>
             <Step n={2} icon={Users} image={PRODUCT_IMAGES.agent} title="Qloo finds the readers">
-              Nearshelf asks Qloo&apos;s taste graph which books the readers of your seeds also love, filtered to recent titles.
+              Nearshelf asks Qloo&apos;s taste graph which books your readers also love, filtered to recent titles.
             </Step>
             <Step n={3} icon={ShieldCheck} image={PRODUCT_IMAGES.rejected} title="Every book is checked against the rules">
               Recency, size, and whether it&apos;s one of your own books. Every verdict is made in code, not by a model.
@@ -54,7 +54,7 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
               </Tile>
             </div>
             <Tile icon={Fingerprint} image={PRODUCT_IMAGES.evidence} title="Proof for every book.">
-              Its Qloo entity ID, publication year, popularity score and the seed books it came from.
+              Its Qloo entity ID, publication year, popularity score and the books it came from.
             </Tile>
             <Tile icon={Copy} image={PRODUCT_IMAGES.line} title="A line ready for your query.">
               &quot;My novel will appeal to readers of A and B&quot;, built only from comps that passed. Copy it in one click.
@@ -79,16 +79,16 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
                   <ul className="plain-list">
                     <li><XCircle size={16} aria-hidden="true" /> Only {evalTotals.llmPassed} of {evalTotals.llmTitles} suggested titles passed every rule</li>
                     <li><XCircle size={16} aria-hidden="true" /> {evalTotals.llmTooOld} were too old and {evalTotals.llmTooBig} were too big to cite</li>
-                    <li><XCircle size={16} aria-hidden="true" /> {evalTotals.llmEchoedSeed} were your own seed books and {evalTotals.llmWrongAuthor} had the wrong author</li>
+                    <li><XCircle size={16} aria-hidden="true" /> {evalTotals.llmEchoedSeed} were the author&apos;s own books and {evalTotals.llmWrongAuthor} had the wrong author</li>
                   </ul>
-                  <p className="small muted">Same seed books, same rules, measured with npm run eval.</p>
+                  <p className="small muted">Same books, same rules, measured with npm run eval.</p>
                 </>
               ) : (
                 <>
                   <p className="label">What a plain LLM gets wrong</p>
                   <ul className="plain-list">
                     <li><XCircle size={16} aria-hidden="true" /> Suggests books that are too old or too big to cite</li>
-                    <li><XCircle size={16} aria-hidden="true" /> Returns your own seed books as comps</li>
+                    <li><XCircle size={16} aria-hidden="true" /> Returns your own books as comps</li>
                     <li><XCircle size={16} aria-hidden="true" /> Credits books to the wrong author</li>
                   </ul>
                 </>
@@ -98,7 +98,7 @@ export function Sections({ evalTotals }: { evalTotals: EvalTotals | null }) {
               <p className="label">What Nearshelf can&apos;t do</p>
               <ul className="plain-list plain-list-pass">
                 <li><ShieldCheck size={16} aria-hidden="true" /> Show a book Qloo doesn&apos;t know</li>
-                <li><ShieldCheck size={16} aria-hidden="true" /> Return one of your seed books as a comp</li>
+                <li><ShieldCheck size={16} aria-hidden="true" /> Return one of your own books as a comp</li>
                 <li><ShieldCheck size={16} aria-hidden="true" /> Let the model pick, add or rename a book</li>
               </ul>
               <a className="btn btn-primary" href="/find">Try the comparison</a>
@@ -213,7 +213,7 @@ function EvalStrip({ t }: { t: EvalTotals }) {
       <p className="label">Across {t.sets} seed sets, measured with npm run eval</p>
       <div className="facts">
         <div className="fact"><p className="fact-num">{t.llmPassed} of {t.llmTitles}</p><p>plain-LLM titles passed every rule</p></div>
-        <div className="fact"><p className="fact-num">{t.llmEchoedSeed}</p><p>LLM titles were the author&apos;s own seed books</p></div>
+        <div className="fact"><p className="fact-num">{t.llmEchoedSeed}</p><p>LLM titles were the author&apos;s own books</p></div>
         <div className="fact"><p className="fact-num">{t.nearshelfSetsWithThreePlus} of {t.sets}</p><p>seed sets got three or more Nearshelf comps</p></div>
       </div>
     </div>

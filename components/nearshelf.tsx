@@ -29,7 +29,7 @@ const STEPS: { state: StepState; label: string }[] = [
 
 const SEED_NOTE: Record<SeedResolution["status"], (s: SeedResolution) => string> = {
   RESOLVED: (s) => `${s.book!.title}${s.book!.author ? ` by ${s.book!.author}` : ""}${s.book!.year ? `, ${s.book!.year}` : ""}`,
-  NOT_FOUND: () => "Couldn't find this book",
+  NOT_FOUND: () => "Couldn't find this book. Check the spelling or use the full title",
   NO_QLOO_DATA: (s) => `Real book${s.external?.year ? ` (${s.external.year})` : ""}, but Qloo has no reader data for it`,
 };
 
@@ -231,7 +231,7 @@ export function Nearshelf({
                   (phase === "idle" ? (
                     <div className="tool-section">
                       <h2>What a plain LLM said</h2>
-                      <p className="muted">Run a search first, then compare. The same seed books go to an LLM with no Qloo access.</p>
+                      <p className="muted">Run a search first. The same books then go to an LLM with no Qloo access, and its answers are checked here.</p>
                       <div className="row" style={{ marginTop: 16 }}>
                         <button type="button" className="btn btn-primary" onClick={startSearch}>Find comps first</button>
                       </div>
@@ -354,7 +354,7 @@ export function Nearshelf({
               <input id="my-title" value={myTitle} maxLength={120} onChange={(e) => setMyTitle(e.target.value)} placeholder="My novel" />
               <blockquote className="sentence">{sentence}</blockquote>
               {result?.accepted.length === 1 && (
-                <p className="small muted">One comp is weaker than two in a query. Widen the window or add a seed book.</p>
+                <p className="small muted">One comp is weaker than two in a query. Widen the window or add another book.</p>
               )}
               <div className="row" style={{ marginTop: 12 }}>
                 <button type="button" className="btn btn-primary" onClick={() => copy("sentence", sentence)}>
